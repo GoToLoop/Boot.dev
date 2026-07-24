@@ -3,7 +3,6 @@ from typing import Literal
 Soldier = dict[Literal["damage", "attacks_per_second"], int]
 Result = Literal["soldier 1 wins", "soldier 2 wins", "both soldiers die"]
 
-
 def fight_soldiers(soldier_one: Soldier, soldier_two: Soldier) -> Result:
     soldier_one_dps = get_soldier_dps(soldier_one)
     soldier_two_dps = get_soldier_dps(soldier_two)
