@@ -5,7 +5,7 @@ from numbers import Complex
 
 from main import destroy_walls_complex
 
-TestCase = list[Complex], list[Complex]
+type TestCase = tuple[list[Complex], list[Complex]]
 
 run_cases = (
     ([0, 20, 1 + 30j], [20, 1 + 30j]),

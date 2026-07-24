@@ -2,7 +2,7 @@
 
 from main import Soldier, Result, fight_soldiers, get_soldier_dps
 
-TestCase = Soldier, Soldier, Result
+type TestCase = tuple[Soldier, Soldier, Result]
 
 run_cases: list[TestCase] = [
     (
