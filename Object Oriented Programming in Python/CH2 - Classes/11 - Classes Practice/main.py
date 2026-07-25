@@ -21,5 +21,6 @@ class Library:
 
         return [
             book for book in lib.books
-            if any(search in field.lower() for field in astuple(book))
+            if any( search in name for name in map(str.lower, astuple(book)) )
+            # if search in book.title.lower() or search in book.author.lower()
         ]
