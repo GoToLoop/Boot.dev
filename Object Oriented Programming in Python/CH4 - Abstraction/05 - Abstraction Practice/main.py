@@ -1,31 +1,35 @@
 from random import shuffle
+from typing import cast, Literal
 
-Card = tuple[str, str]
+Rank = Literal[
+    "Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+    "Jack", "Queen", "King",
+]
+
+Suit = Literal["Hearts", "Diamonds", "Clubs", "Spades"]
+
+Card = tuple[Rank, Suit]
+
+RANKS = (
+    "Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+    "Jack", "Queen", "King",
+)
+
+SUITS = "Hearts", "Diamonds", "Clubs", "Spades"
+
+DECK = *(
+    cast(Card, (rank, suit))
+    for suit in SUITS
+    for rank in RANKS
+),
 
 class DeckOfCards:
-    SUITS = "Hearts", "Diamonds", "Clubs", "Spades"
-
-    RANKS = (
-        "Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-        "Jack", "Queen", "King",
-    )
-
-    def __init__(self): self.__cards = self.create_deck()
-
-    def create_deck(self) -> list[Card]:
-        return [
-            (rank, suit)
-            for suit in DeckOfCards.SUITS
-            for rank in DeckOfCards.RANKS
-        ]
-
+    def __init__(self): self.__cards = [*DECK]
 
     def shuffle_deck(self): shuffle(self.__cards)
 
     def deal_card(self) -> Card | None:
         return self.__cards.pop() if self.__cards else None
-
-
 
     # don't touch below this line
 
