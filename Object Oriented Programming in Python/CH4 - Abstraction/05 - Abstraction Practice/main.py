@@ -3,7 +3,7 @@ from typing import cast, Literal
 
 Rank = Literal[
     "Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-    "Jack", "Queen", "King",
+    "Jack", "Queen", "King"
 ]
 
 Suit = Literal["Hearts", "Diamonds", "Clubs", "Spades"]
@@ -12,7 +12,7 @@ Card = tuple[Rank, Suit]
 
 RANKS = (
     "Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-    "Jack", "Queen", "King",
+    "Jack", "Queen", "King"
 )
 
 SUITS = "Hearts", "Diamonds", "Clubs", "Spades"

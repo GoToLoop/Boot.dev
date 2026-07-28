@@ -1,6 +1,8 @@
+from dataclasses import dataclass
+
+@dataclass
 class Rectangle:
-    def __init__(self, length: int, width: int):
-        self.length = length; self.width = width
+    length: int; width: int
 
     def get_area(self) -> int: return self.length * self.width
 
@@ -10,3 +12,7 @@ class Rectangle:
 
 class Square(Rectangle):
     def __init__(self, length: int): super().__init__(length, length)
+
+    def __eq__(self, other: object):
+        if not isinstance(other, Rectangle): return NotImplemented
+        return self.length == other.length == other.width

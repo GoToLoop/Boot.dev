@@ -1,22 +1,18 @@
 from collections.abc import Iterable
+from dataclasses import dataclass
 
+@dataclass
 class Unit:
-    def __init__(unit, name: str, pos_x: int, pos_y: int):
-        unit.name = name
-        unit.pos_x = pos_x
-        unit.pos_y = pos_y
-
+    name: str; pos_x: int; pos_y: int
 
     def in_area(unit, x1: int, y1: int, x2: int, y2: int) -> bool:
         return x1 <= unit.pos_x <= x2 and y1 <= unit.pos_y <= y2
 
 
 
+@dataclass
 class Dragon(Unit):
-    def __init__(dragon, name: str, pos_x: int, pos_y: int, fire_range: int):
-        super().__init__(name, pos_x, pos_y)
-        dragon.__fire_range = fire_range
-
+    __fire_range: int
 
     def breathe_fire(d, x: int, y: int, units: Iterable[Unit]) -> list[Unit]:
         radius = d.__fire_range

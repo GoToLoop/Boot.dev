@@ -24,8 +24,8 @@ class BatteringRam(Siege):
     @override
     def get_trip_cost(self, distance: int, food_price: int) -> float:
         return (
-            self.LOAD_COST_FACTOR * self.load_weight
-            + super().get_trip_cost(distance, food_price)
+            super().get_trip_cost(distance, food_price)
+            + self.LOAD_COST_FACTOR * self.load_weight
         )
 
     @override
