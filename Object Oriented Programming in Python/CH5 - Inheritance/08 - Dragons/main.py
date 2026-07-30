@@ -1,5 +1,5 @@
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, InitVar
 
 @dataclass
 class Unit:
@@ -12,7 +12,11 @@ class Unit:
 
 @dataclass
 class Dragon(Unit):
-    __fire_range: int
+    fire_range: InitVar[int] # constructor's param only, not a field
+
+    def __post_init__(self, fire_range: int):
+        self.__fire_range = fire_range # store it as a private field instead
+
 
     def breathe_fire(d, x: int, y: int, units: Iterable[Unit]) -> list[Unit]:
         radius = d.__fire_range
