@@ -1,0 +1,7 @@
+[Desktop Entry]
+Icon=text-html
+Name=Library Book Encapsulation
+Comment=Encapsulation (keeping internal state private), using a constructor (__init__), and understanding instance vs. class variables.
+Keywords=programming;course;bootdev;challenge;encapsulation
+Type=Link
+URL=https://www.boot.dev/challenges/b4eb306b-721d-4119-9e14-76caa9a0f65f
