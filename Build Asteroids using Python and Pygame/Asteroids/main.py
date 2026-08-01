@@ -2,9 +2,7 @@
 
 import pygame
 from logger import log_state
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT
-
-BG = pygame.colordict.THECOLORS["black"]
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, BG
 
 def main():
     print("Starting Asteroids with pygame version:", pygame.version.ver)
@@ -23,11 +21,10 @@ def main():
         pygame.display.flip()
 
 
-def event_loop() -> bool:
+def event_loop() -> bool: # True = QUIT(SDL 256)
     for event in pygame.event.get():
-        if event.type == pygame.QUIT: return True
-    else: return False
-
+        if event.type is pygame.QUIT: return True
+    return False
 
 
 __name__ == "__main__" and main()  # pyright: ignore[reportUnusedExpression]
