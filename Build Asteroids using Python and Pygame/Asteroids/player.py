@@ -27,7 +27,7 @@ class Player(CircleShape):
         b = (rear := pos - forward) - right # left-rear base
         c = rear + right # right-rear base
 
-        return a, b, c
+        return a, b, c # isosceles shape
 
 
     def rotate(self, Δ: float): self.rotation += Δ * PLAYER_TURN_SPEED

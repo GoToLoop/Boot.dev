@@ -7,13 +7,10 @@ import pygame
 from logger import log_state
 
 def main():
-    print("Starting Asteroids with pygame version:", pygame.version.ver)
-    print("Screen width:", SCREEN_WIDTH)
-    print("Screen height:", SCREEN_HEIGHT)
-
+    welcome_msg()
     pygame.init()
 
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen = pygame.display.set_mode( (SCREEN_WIDTH, SCREEN_HEIGHT) )
     player = Player(SCREEN_WIDTH >> 1, SCREEN_HEIGHT >> 1)
 
     clock = pygame.time.Clock()
@@ -21,15 +18,20 @@ def main():
 
     while True:
         log_state()
-        if check_quit(): return
+        if check_quit(): break
 
         screen.fill(BG)
         player.update(Δ)
         player.draw(screen)
 
-        pygame.display.flip()
-
+        pygame.display.flip() # render screen canvas surface
         Δ = clock.tick(FPS) / 1000 # ms to seconds (~16 to ~0.0167)
+
+
+def welcome_msg():
+    print("\nStarting Asteroids with pygame version:", pygame.version.ver)
+    print("Screen width:", SCREEN_WIDTH)
+    print("Screen height:", SCREEN_HEIGHT)
 
 
 def check_quit() -> bool: # True = QUIT(SDL 256)
