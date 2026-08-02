@@ -4,6 +4,7 @@ from player import Player
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BG
 
 import pygame
+from platform import python_version
 from logger import log_state
 
 def main():
@@ -29,13 +30,18 @@ def main():
 
 
 def welcome_msg():
-    print("\nStarting Asteroids with pygame version:", pygame.version.ver)
-    print("Screen width:", SCREEN_WIDTH)
+    print("\nStarting Asteroids with pygame version:", pygame.ver)
+    print("Using SDL version:", pygame.SDL)
+    print("On Python version", python_version())
+
+    print("\nScreen width:", SCREEN_WIDTH)
     print("Screen height:", SCREEN_HEIGHT)
 
 
 def check_quit() -> bool: # True = QUIT(SDL 256)
-    return bool( pygame.event.get(pygame.QUIT) )
+    quit_requested = pygame.event.peek(pygame.QUIT)
+    pygame.event.clear(pump = False)
+    return quit_requested
 
 
 __name__ == "__main__" and main() # pyright: ignore[reportUnusedExpression]
