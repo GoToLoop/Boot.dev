@@ -35,7 +35,7 @@ def main():
 
 
 def check_quit() -> bool: # True = QUIT(SDL 256)
-    return any( event.type is pygame.QUIT for event in pygame.event.get() )
+    return bool(pygame.event.get(pygame.QUIT))
 
 
-__name__ == "__main__" and main()  # pyright: ignore[reportUnusedExpression]
+__name__ == "__main__" and main() # pyright: ignore[reportUnusedExpression]
