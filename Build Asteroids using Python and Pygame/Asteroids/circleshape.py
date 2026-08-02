@@ -1,22 +1,22 @@
-import pygame
 from typing import Tuple, override
 from abc import ABCMeta, abstractmethod
+from pygame import sprite, Vector2, SurfaceType
 
-class CircleShape(pygame.sprite.Sprite, metaclass=ABCMeta):
+class CircleShape(sprite.Sprite, metaclass=ABCMeta):
 
-    containers: Tuple[pygame.sprite.Group, ...] # declared, but not created yet
+    containers: Tuple[sprite.Group, ...] # declared, but not created yet
 
     def __init__(self, x: float, y: float, radius: float):
         if hasattr(self, "containers"): super().__init__(*self.containers)
         else: super().__init__()
 
-        self.position = pygame.Vector2(x, y)
-        self.velocity = pygame.Vector2()
-        self.radius = radius
+        self.position: Vector2 = Vector2(x, y)
+        self.velocity: Vector2 = Vector2()
+        self.radius: float = radius
 
 
     @abstractmethod
-    def draw(self, screen: pygame.Surface): ...
+    def draw(self, screen: SurfaceType): ...
 
     @abstractmethod
     @override

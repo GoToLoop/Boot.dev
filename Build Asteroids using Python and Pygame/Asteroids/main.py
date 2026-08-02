@@ -3,9 +3,10 @@
 from player import Player
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BG
 
-import pygame
-from platform import python_version
 from logger import log_state
+from platform import python_version
+
+import pygame
 
 def main():
     welcome_msg()
