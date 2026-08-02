@@ -1,11 +1,15 @@
 from circleshape import CircleShape
-from constants import PLAYER_RADIUS, LINE_WIDTH, PLAYER_TURN_SPEED, SHIP_COLOR
+
+from constants import (
+    PLAYER_RADIUS, PLAYER_TURN_SPEED, WIDTH_RATIO, LINE_WIDTH, SHIP_COLOR
+)
 
 import pygame
-from typing import override, Tuple
+from typing import override, Final, Tuple
 
 class Player(CircleShape):
-    init_tri_vec = pygame.Vector2(0, 1)
+    starting_direction: Final = pygame.Vector2(0, 1) # pointing downwards
+    quit_event: Final = pygame.event.Event(pygame.QUIT)
 
     def __init__(self, x: float, y: float):
         super().__init__(x, y, PLAYER_RADIUS)
@@ -15,12 +19,12 @@ class Player(CircleShape):
     def triangle(self) -> Tuple[pygame.Vector2, pygame.Vector2, pygame.Vector2]:
         pos = self.position; rad = self.radius; rot = self.rotation; 
 
-        forward = rad * self.init_tri_vec.rotate(rot)
-        right = rad / 1.5 * self.init_tri_vec.rotate(rot + 90)
+        forward = rad * Player.starting_direction.rotate(rot)
+        right = rad / WIDTH_RATIO * Player.starting_direction.rotate(rot + 90)
 
-        a = pos + forward
-        b = (pf := pos - forward) - right
-        c = pf + right
+        a = pos + forward # front nose
+        b = (rear := pos - forward) - right # left-rear base
+        c = rear + right # right-rear base
 
         return a, b, c
 
@@ -40,5 +44,4 @@ class Player(CircleShape):
 
         elif keys[pygame.K_d] or keys[pygame.K_RIGHT]: self.rotate(Δ)
 
-        elif keys[pygame.K_ESCAPE]:
-            pygame.event.post(pygame.event.Event(pygame.QUIT))
+        elif keys[pygame.K_ESCAPE]: pygame.event.post(Player.quit_event)

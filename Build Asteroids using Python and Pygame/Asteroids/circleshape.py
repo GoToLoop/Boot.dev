@@ -1,6 +1,6 @@
 import pygame
-from abc import ABCMeta, abstractmethod
 from typing import override
+from abc import ABCMeta, abstractmethod
 
 class CircleShape(pygame.sprite.Sprite, metaclass=ABCMeta):
     containers: tuple[pygame.sprite.Group, ...] # declared, but not created yet
