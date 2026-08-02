@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-from re import S
-
 from player import Player
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BG
 
@@ -31,7 +29,7 @@ def main():
 
         pygame.display.flip()
 
-        Δ = clock.tick(FPS) / 1000 # ms to seconds (±16 to ±0.0167)
+        Δ = clock.tick(FPS) / 1000 # ms to seconds (~16 to ~0.0167)
 
 
 def check_quit() -> bool: # True = QUIT(SDL 256)

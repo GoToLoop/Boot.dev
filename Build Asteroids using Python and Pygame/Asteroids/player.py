@@ -5,9 +5,10 @@ from constants import (
 )
 
 import pygame
-from typing import override, Final, Tuple
+from typing import Final, Tuple, override
 
 class Player(CircleShape):
+
     starting_direction: Final = pygame.Vector2(0, 1) # pointing downwards
     quit_event: Final = pygame.event.Event(pygame.QUIT)
 
@@ -17,7 +18,7 @@ class Player(CircleShape):
 
 
     def triangle(self) -> Tuple[pygame.Vector2, pygame.Vector2, pygame.Vector2]:
-        pos = self.position; rad = self.radius; rot = self.rotation; 
+        pos = self.position; rad = self.radius; rot = self.rotation
 
         forward = rad * Player.starting_direction.rotate(rot)
         right = rad / WIDTH_RATIO * Player.starting_direction.rotate(rot + 90)

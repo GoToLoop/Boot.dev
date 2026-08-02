@@ -1,9 +1,10 @@
 import pygame
-from typing import override
+from typing import Tuple, override
 from abc import ABCMeta, abstractmethod
 
 class CircleShape(pygame.sprite.Sprite, metaclass=ABCMeta):
-    containers: tuple[pygame.sprite.Group, ...] # declared, but not created yet
+
+    containers: Tuple[pygame.sprite.Group, ...] # declared, but not created yet
 
     def __init__(self, x: float, y: float, radius: float):
         if hasattr(self, "containers"): super().__init__(*self.containers)
