@@ -3,7 +3,7 @@
 from re import S
 
 from player import Player
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, BG
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BG
 
 import pygame
 from logger import log_state
@@ -14,8 +14,8 @@ def main():
     print("Screen height:", SCREEN_HEIGHT)
 
     pygame.init()
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     player = Player(SCREEN_WIDTH >> 1, SCREEN_HEIGHT >> 1)
 
     clock = pygame.time.Clock()
@@ -31,7 +31,7 @@ def main():
 
         pygame.display.flip()
 
-        Δ = clock.tick(60) / 1000 # milliseconds
+        Δ = clock.tick(FPS) / 1000 # ms to seconds (±16 to ±0.0167)
 
 
 def check_quit() -> bool: # True = QUIT(SDL 256)

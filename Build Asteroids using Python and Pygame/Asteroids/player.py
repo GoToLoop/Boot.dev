@@ -1,5 +1,5 @@
 from circleshape import CircleShape
-from constants import PLAYER_RADIUS, LINE_WIDTH, SHIP_COLOR, PLAYER_TURN_SPEED
+from constants import PLAYER_RADIUS, LINE_WIDTH, PLAYER_TURN_SPEED, SHIP_COLOR
 
 import pygame
 from typing import override, Tuple
@@ -9,7 +9,7 @@ class Player(CircleShape):
 
     def __init__(self, x: float, y: float):
         super().__init__(x, y, PLAYER_RADIUS)
-        self.rotation = 0.0 # degree angle
+        self.rotation = 0.0 # angle in degrees
 
 
     def triangle(self) -> Tuple[pygame.Vector2, pygame.Vector2, pygame.Vector2]:
@@ -33,7 +33,7 @@ class Player(CircleShape):
 
 
     @override
-    def update(self, Δ: float):
+    def update(self, Δ: float): # amount to rotate (Δ in seconds)
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_a] or keys[pygame.K_LEFT]: self.rotate(-Δ)
