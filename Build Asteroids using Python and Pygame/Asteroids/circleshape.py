@@ -1,6 +1,6 @@
-from typing import Generic, List, Tuple, Iterator, TypeVar, override
+from typing import Generic, Iterator, List, Tuple, TypeVar, override
 from abc import ABCMeta, abstractmethod
-from pygame import sprite, Vector2, SurfaceType
+from pygame import sprite, SurfaceType, Vector2
 
 T = TypeVar("T", bound=sprite.Sprite)
 
