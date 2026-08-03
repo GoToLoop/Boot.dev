@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 from player import Player
+from circleshape import TypedGroup, CircleShape
+
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BG
 
 from logger import log_state
@@ -10,10 +12,15 @@ import pygame
 
 def main():
     welcome_msg()
-    pygame.init()
 
+    pygame.init()
     screen = pygame.display.set_mode( (SCREEN_WIDTH, SCREEN_HEIGHT) )
-    player = Player(SCREEN_WIDTH >> 1, SCREEN_HEIGHT >> 1)
+
+    updatable: TypedGroup[CircleShape] = TypedGroup()
+    drawable: TypedGroup[CircleShape] = TypedGroup()
+
+    Player.containers = (updatable, drawable)
+    Player(SCREEN_WIDTH >> 1, SCREEN_HEIGHT >> 1)
 
     clock = pygame.time.Clock()
     Δ = 0.0
@@ -23,8 +30,9 @@ def main():
         if check_quit(): break
 
         screen.fill(BG)
-        player.update(Δ)
-        player.draw(screen)
+        updatable.update(Δ)
+    
+        for shape in drawable: shape.draw(screen)
 
         pygame.display.flip() # render screen canvas surface
         Δ = clock.tick(FPS) / 1000 # ms to seconds (~16 to ~0.0167)

@@ -15,7 +15,7 @@ class Player(CircleShape):
 
     def __init__(self, x: float, y: float):
         super().__init__(x, y, PLAYER_RADIUS)
-        self.rotation = 0.0 # angle in degrees in relation to `unit_vector`
+        self.rotation = 0.0 # how many degrees to clockwise-rotate `unit_vector`
 
 
     def triangle(self) -> Tuple[pygame.Vector2, pygame.Vector2, pygame.Vector2]:
@@ -23,13 +23,13 @@ class Player(CircleShape):
 
         forward = Player.unit_vector.rotate(rot) # same direction as ship now
         forward *= rad # scaled to ship's radius
-
+         
         right = Player.unit_vector.rotate(rot + 90) # clockwise sideways turn
         right *= rad / WIDTH_RATIO # scaled to a ratio of the ship's radius
 
-        a = pos + forward # front nose vertex
-        b = (c := pos - forward) - right # left-rear base vertex
-        c += right # right-rear base vertex
+        a = pos + forward # a: front nose vertex
+        b = (c := pos - forward) - right # b: left-rear vertex; c: center-rear
+        c += right # c: right-rear vertex now
 
         return a, b, c # isosceles shape
 
