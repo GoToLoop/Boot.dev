@@ -53,4 +53,4 @@ def check_quit() -> bool: # True = QUIT(SDL 256)
     return quit_requested
 
 
-__name__ == "__main__" and main() # pyright: ignore[reportUnusedExpression]
+__name__ == "__main__" and main()

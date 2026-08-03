@@ -1,4 +1,6 @@
-from typing import Generic, Iterator, List, Tuple, TypeVar, override
+# pyright: reportMissingTypeArgument = false
+
+from typing import Generic, Iterator, List, Tuple, TypeVar, cast, override
 from abc import ABCMeta, abstractmethod
 from pygame import sprite, SurfaceType, Vector2
 
@@ -9,10 +11,11 @@ class TypedGroup(sprite.Group, Generic[T]):
     def copy(self) -> "TypedGroup[T]": return super().copy()
 
     @override
-    def sprites(self) -> List[T]: return super().sprites()
+    def sprites(self) -> List[T]: return cast(List[T], super().sprites())
 
     @override
-    def __iter__(self) -> Iterator[T]: return super().__iter__()
+    def __iter__(self) -> Iterator[T]:
+        return cast(Iterator[T], super().__iter__())
 
 
 
