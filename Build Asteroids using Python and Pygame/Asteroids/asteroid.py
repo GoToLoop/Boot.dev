@@ -1,4 +1,6 @@
 from circleshape import CircleShape
+from typehints import ColorValue
+
 import pygame
 from typing import override
 

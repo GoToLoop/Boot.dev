@@ -1,7 +1,5 @@
-# pyright: reportMissingModuleSource = false
-
 from pygame.colordict import THECOLORS
-from pygame._common import ColorValue
+from typehints import RGBAOutput
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -13,5 +11,5 @@ PLAYER_SPEED = 200
 PLAYER_TURN_SPEED = 300
 WIDTH_RATIO = 1.5
 
-BG: ColorValue = THECOLORS["black"]
-SHIP_COLOR: ColorValue = THECOLORS["white"]
+BG: RGBAOutput = THECOLORS["black"]
+SHIP_COLOR: RGBAOutput = THECOLORS["white"]

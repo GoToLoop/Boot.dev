@@ -1,4 +1,4 @@
-# pyright: reportMissingTypeArgument = false
+# pyright: reportMissingTypeArgument = hint
 
 from typing import Generic, Iterator, List, Tuple, TypeVar, cast, override
 from abc import ABCMeta, abstractmethod
