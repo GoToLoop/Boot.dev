@@ -6,7 +6,7 @@ T = TypeVar("T", bound=sprite.Sprite)
 
 class TypedGroup(sprite.Group, Generic[T]):
     @override
-    def copy(self) -> "TypedGroup": return super().copy()
+    def copy(self) -> "TypedGroup[T]": return super().copy()
 
     @override
     def sprites(self) -> List[T]: return super().sprites()

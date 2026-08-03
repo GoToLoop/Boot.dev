@@ -19,7 +19,7 @@ def main():
     updatable: TypedGroup[CircleShape] = TypedGroup()
     drawable: TypedGroup[CircleShape] = TypedGroup()
 
-    Player.containers = (updatable, drawable)
+    Player.containers = updatable, drawable
     Player(SCREEN_WIDTH >> 1, SCREEN_HEIGHT >> 1)
 
     clock = pygame.time.Clock()
