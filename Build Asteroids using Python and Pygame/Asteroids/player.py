@@ -54,7 +54,7 @@ class Player(CircleShape):
         self.position += rotated # updated player position
 
 
-    def rotate(self, Δ: float):
+    def rotate(self, Δ: float): # amount to rotate (Δ in seconds)
         """Adjust the ship's rotation angle by the specified amount."""
         self.rotation += PLAYER_TURN_SPEED * Δ
 

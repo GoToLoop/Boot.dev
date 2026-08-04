@@ -11,7 +11,7 @@ class Asteroid(CircleShape):
     def __init__(self, x: float, y: float, radius: float, vel: pygame.Vector2):
         """Initialize an asteroid with position, size, and initial velocity."""
         super().__init__(x, y, radius)
-        self.velocity = vel
+        self.velocity = vel # Caution: mutates received Vector2 argument!
 
 
     @override
