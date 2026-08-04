@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 
+from asteroid import Asteroid
+from asteroidfield import AsteroidField
 from player import Player
-from circleshape import TypedGroup, CircleShape
+
+from typedgroup import TypedGroup
+from traittypes import Drawable, Updatable, Spritable
 
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BG
 
@@ -16,11 +20,16 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode( (SCREEN_WIDTH, SCREEN_HEIGHT) )
 
-    updatables: TypedGroup[CircleShape] = TypedGroup()
-    drawables: TypedGroup[CircleShape] = TypedGroup()
+    updatables: TypedGroup[Updatable] = TypedGroup()
+    drawables: TypedGroup[Drawable] = TypedGroup()
+    asteroids: TypedGroup[Spritable] = TypedGroup()
 
     Player.containers = updatables, drawables
     Player(SCREEN_WIDTH >> 1, SCREEN_HEIGHT >> 1)
+
+    Asteroid.containers = asteroids, updatables, drawables
+    AsteroidField.container = updatables
+    AsteroidField() # spawns asteroids
 
     clock = pygame.time.Clock()
     Δ = 0.0 # frame-to-frame transpired time in seconds

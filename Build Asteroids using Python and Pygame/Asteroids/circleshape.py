@@ -1,40 +1,20 @@
-# pyright: reportMissingTypeArgument = hint
+from typedgroup import TypedGroup
+from traittypes import Spritable
 
-from typing import Generic, Iterator, List, Tuple, TypeVar, cast, override
-from abc import ABCMeta, abstractmethod
-from pygame import sprite, SurfaceType, Vector2
+from typing import Tuple
+from abc import ABCMeta
+from pygame import sprite, Vector2
 
-T = TypeVar("T", bound=sprite.Sprite)
-
-class TypedGroup(sprite.Group, Generic[T]):
-    @override
-    def copy(self) -> "TypedGroup[T]": return super().copy()
-
-    @override
-    def sprites(self) -> List[T]: return cast(List[T], super().sprites())
-
-    @override
-    def __iter__(self) -> Iterator[T]:
-        return cast(Iterator[T], super().__iter__())
-
-
-
-class CircleShape(sprite.Sprite, metaclass=ABCMeta):
-
-    containers: Tuple[TypedGroup["CircleShape"], ...] # merely declared
+class CircleShape(Spritable, metaclass=ABCMeta):
+    """An abstract base class for circular game entities that possess position,
+    velocity, a radius and insert themselves into typed Pygame group containers.
+    """
+    containers: Tuple[TypedGroup[Spritable], ...] # declared but not created yet
 
     def __init__(self, x: float, y: float, radius: float):
         if hasattr(self, "containers"): super().__init__(*self.containers)
-        else: super().__init__()
+        else: sprite.Sprite.__init__(self)
 
         self.position: Vector2 = Vector2(x, y)
         self.velocity: Vector2 = Vector2()
         self.radius: float = radius
-
-
-    @abstractmethod
-    def draw(self, screen: SurfaceType): ...
-
-    @abstractmethod
-    @override
-    def update(self, Δ: float): ...

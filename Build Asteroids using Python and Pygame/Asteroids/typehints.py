@@ -2,7 +2,9 @@
 
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING: from pygame._common import ColorValue, RGBAOutput
-else: ColorValue = RGBAOutput = None
+if TYPE_CHECKING: from pygame._common import (
+    Coordinate, ColorValue, RGBAOutput
+)
+else: Coordinate = ColorValue = RGBAOutput = None
 
-__all__ = "ColorValue", "RGBAOutput"
+__all__ = "Coordinate", "ColorValue", "RGBAOutput"
