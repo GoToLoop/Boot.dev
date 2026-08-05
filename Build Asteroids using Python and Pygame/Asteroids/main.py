@@ -7,12 +7,12 @@ from player import Player
 from typedgroup import TypedGroup
 from traittypes import Drawable, Updatable, Spritable
 
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BG
-
-from logger import log_state
-from platform import python_version
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BG, LOGGING
 
 import pygame
+from platform import python_version
+
+if LOGGING: from logger import log_state
 
 def main():
     welcome_msg()
@@ -35,7 +35,7 @@ def main():
     Δ = 0.0 # frame-to-frame transpired time in seconds
 
     while True:
-        log_state()
+        LOGGING and log_state() # pyright: ignore[reportPossiblyUnboundVariable]
         if check_quit(): break
 
         screen.fill(BG)

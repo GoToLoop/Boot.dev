@@ -1,6 +1,8 @@
 from pygame.colordict import THECOLORS
 from typehints import RGBAOutput
 
+LOGGING = False
+
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 LINE_WIDTH = 2

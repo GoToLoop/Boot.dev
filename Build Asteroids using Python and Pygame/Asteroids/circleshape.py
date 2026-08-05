@@ -3,6 +3,7 @@ from traittypes import Spritable
 
 from typing import Tuple
 from abc import ABCMeta
+
 from pygame import sprite, Vector2
 
 class CircleShape(Spritable, metaclass=ABCMeta):
