@@ -22,7 +22,8 @@ class Player(CircleShape):
         relative to the initial downward-facing origin vector.
         """
         super().__init__(x, y, PLAYER_RADIUS)
-        self.rotation = 0.0 # how many degrees to clockwise-rotate `unit_vector`
+        self.rotation: float = 0.0
+        """Offset on how many degrees to clockwise-rotate ``unit_vector``"""
 
 
     def triangle(self) -> Tuple[pygame.Vector2, pygame.Vector2, pygame.Vector2]:
@@ -69,7 +70,7 @@ class Player(CircleShape):
 
     @override
     def update(self, Δ: float): # amount to rotate or move (Δ in seconds)
-        """Poll keyboard input to handle ship rotation, movement, or enqueue
+        """Poll keyboard input to handle ship rotation, movement, and enqueue
         a quit event during each frame.
         """
         keys = pygame.key.get_pressed()

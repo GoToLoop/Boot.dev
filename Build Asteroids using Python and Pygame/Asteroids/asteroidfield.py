@@ -1,5 +1,5 @@
 from random import choice, randint, uniform
-from typing import Callable, Final, override
+from typing import Callable, Final, Tuple, override
 
 from typedgroup import TypedGroup
 from traittypes import Updatable
@@ -8,8 +8,8 @@ from constants import *
 from asteroid import Asteroid
 from pygame import sprite, Vector2
 
-Edge = tuple[Vector2, Callable[[float], Vector2]]
-"""Represents a spawn boundary edge, defined by a directional vector and a
+Edge = Tuple[Tuple[int, int], Callable[ [float], Tuple[float, float] ]]
+"""Represents a spawn boundary edge, defined by a directional unit and a
 function that calculates a position along that edge given a normalized scalar.
 """
 
@@ -19,26 +19,22 @@ class AsteroidField(Updatable):
     """
     container: TypedGroup[Updatable] # merely declared, not created yet
 
-    edges: Final[ tuple[Edge, Edge, Edge, Edge] ] = (
+    EDGES: Final[ Tuple[Edge, Edge, Edge, Edge] ] = (
         (
-            Vector2(1, 0), # east
-            lambda y: Vector2(-ASTEROID_MAX_RADIUS, SCREEN_HEIGHT * y),
+            (1, 0), # east
+            lambda y: (-ASTEROID_MAX_RADIUS, SCREEN_HEIGHT * y),
         ),
         (
-            Vector2(-1, 0), # west
-            lambda y: Vector2(
-                SCREEN_WIDTH + ASTEROID_MAX_RADIUS, SCREEN_HEIGHT * y
-            ),
+            (-1, 0), # west
+            lambda y: (SCREEN_WIDTH + ASTEROID_MAX_RADIUS, SCREEN_HEIGHT * y),
         ),
         (
-            Vector2(0, 1), # south
-            lambda x: Vector2(SCREEN_WIDTH * x, -ASTEROID_MAX_RADIUS),
+            (0, 1), # south
+            lambda x: (SCREEN_WIDTH * x, -ASTEROID_MAX_RADIUS),
         ),
         (
-            Vector2(0, -1), # north
-            lambda x: Vector2(
-                SCREEN_WIDTH * x, SCREEN_HEIGHT + ASTEROID_MAX_RADIUS
-            ),
+            (0, -1), # north
+            lambda x: (SCREEN_WIDTH * x, SCREEN_HEIGHT + ASTEROID_MAX_RADIUS),
         ),
     )
     """Collection of the four screen boundary edges (east, west, south, north) 
@@ -50,32 +46,33 @@ class AsteroidField(Updatable):
         group if specified."""
         if hasattr(self, "container"): super().__init__(self.container)
         else: sprite.Sprite.__init__(self)
-        self.spawn_timer = 0.0
+        self.spawn_timer: float = 0.0
 
 
-    def spawn(self, radius: float, position: Vector2, velocity: Vector2):
+    def spawn(self, rad: float, px: float, py: float, vx: float, vy: float):
         """Instantiate a new asteroid with the given physical properties."""
-        Asteroid(position.x, position.y, radius, velocity)
+        Asteroid(px, py, rad, vx, vy)
 
 
     def gestate(self):
         """Determine a random boundary edge, calculate trajectory parameters, 
         and spawn a new asteroid into the game world.
         """
-        self.spawn_timer = 0
-        edge = choice(self.edges)
+        self.spawn_timer = 0.0
+        edge = choice(AsteroidField.EDGES)
+    
+        vel = Vector2(edge[0])
+        vel *= randint(ASTEROID_MIN_SPEED, ASTEROID_MAX_SPEED)
+        vel.rotate_ip(randint(-ASTEROID_DRIFT_ANGLE, ASTEROID_DRIFT_ANGLE))
 
-        velocity = edge[0] * randint(40, 100)
-        velocity.rotate_ip(randint(-30, 30))
-
-        position = edge[1](uniform(0, 1))
+        pos = edge[1](uniform(0, 1))
         kind = randint(1, ASTEROID_KINDS)
 
-        self.spawn(ASTEROID_MIN_RADIUS * kind, position, velocity)
+        self.spawn(ASTEROID_MIN_RADIUS * kind, pos[0], pos[1], vel.x, vel.y)
 
 
     @override
-    def update(self, Δ: float):
+    def update(self, Δ: float): # transpired time (Δ in seconds)
         """Accumulate elapsed time and trigger a new asteroid spawn when the
         threshold interval is reached.
         """

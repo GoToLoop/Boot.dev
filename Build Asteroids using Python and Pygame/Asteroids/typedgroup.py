@@ -12,17 +12,25 @@ For example: ``Sprite ⊇ {Updatable, Drawable} ⊇ Spritable``.
 """
 
 class TypedGroup(Group, Generic[T]):
-    """A strongly-typed wrapper around ``pygame.sprite.Group`` which enforces
-    type safety for its member sprites via a contravariant type parameter.
+    """A drop-in workaround for the stricter container ``pygame.sprite.Group``.
+    The latter only accepts a ``pygame.sprite.Sprite`` derivative as its generic
+    type if that also implements the ``_SpriteSupportsGroup`` protocol. Meaning
+    it has to provide both ``image`` + ``rect`` properties in addition to the
+    vanilla ``pygame.sprite.Sprite`` base type.
 
-    This is a workaround for ``pygame.sprite.Group`` being untyped: since it 
-    expects objects to match the ``_SpriteSupportsGroup`` protocol (i.e. having 
-    ``image`` + ``rect`` attributes), so now it accepts any ``Sprite`` subclass 
-    at runtime. ``TypedGroup`` adds static type checking by treating the group 
-    as containing only sprites of type ``T`` (where ``T`` is a ``Sprite`` 
-    subclass). Type safety is enforced by the type checker, not at runtime; 
-    where invoking ``TypedGroup::draw()`` on an incompatible or incomplete 
-    sprite can crash the game.
+    This subclass implementation overrides the ``pygame.sprite.Group``'s
+    stricter ``[_TSprite]`` generic type with a more flexible contravariant
+    generic type ``[T]`` (where ``T`` is a ``pygame.sprite.Sprite`` subclass).
+
+    Because this new generic type does not require the ``_SpriteSupportsGroup``
+    protocol anymore, non-fully compliant ``pygame.sprite.Sprite`` subclasseses
+    can be used as this container's generic type ``TypedGroup[T]``, allowing it
+    to store any ``TypedGroup[U]`` where ``U`` lies between ``Sprite`` and ``T``
+    in the inheritance chain: ``Sprite ⊇ U ⊇ T``.
+
+    **Warning:** Type safety is enforced statically by the type checker only,
+    not at runtime. Invoking ``TypedGroup::draw()`` on an incompatible or 
+    incomplete derived sprite instance will still raise an exception!
     """
     @override
     def copy(self) -> "TypedGroup[T]": return super().copy()

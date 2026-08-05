@@ -7,7 +7,7 @@ class Updatable(sprite.Sprite, metaclass=ABCMeta):
 
     @abstractmethod
     @override
-    def update(self, Δ: float) -> None:
+    def update(self, Δ: float):
         """Update the object's state. ``Δ`` represents delta time in seconds."""
         pass
 
@@ -16,7 +16,7 @@ class Drawable(sprite.Sprite, metaclass=ABCMeta):
     """Abstract class for objects that can be rendered to a screen surface."""
 
     @abstractmethod
-    def draw(self, screen: SurfaceType) -> None:
+    def draw(self, screen: SurfaceType):
         """Draw the object onto the given screen surface."""
         pass
 
