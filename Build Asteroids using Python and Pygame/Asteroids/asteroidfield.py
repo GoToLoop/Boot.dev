@@ -9,8 +9,9 @@ from asteroid import Asteroid
 from pygame import sprite, Vector2
 
 Edge = Tuple[Tuple[int, int], Callable[ [float], Tuple[float, float] ]]
-"""Represents a spawn boundary edge, defined by a directional unit and a
-function that calculates a position along that edge given a normalized scalar.
+"""Represents a spawn boundary edge, defined by a directional normalized vector
+which moves opposite to the spawning site and a function that calculates a
+spawning position along that edge given a normalized scalar.
 """
 
 class AsteroidField(Updatable):
@@ -21,19 +22,19 @@ class AsteroidField(Updatable):
 
     EDGES: Final[ Tuple[Edge, Edge, Edge, Edge] ] = (
         (
-            (1, 0), # east boundary edge
+            (1, 0), # moves east (RIGHT) and spawns at the west boundary edge
             lambda y: (-ASTEROID_MAX_RADIUS, SCREEN_HEIGHT * y),
         ),
         (
-            (-1, 0), # west boundary edge
+            (-1, 0), # moves west (LEFT) and spawns at the east boundary edge
             lambda y: (SCREEN_WIDTH + ASTEROID_MAX_RADIUS, SCREEN_HEIGHT * y),
         ),
         (
-            (0, 1), # south boundary edge
+            (0, 1), # moves south (DOWN) and spawns at the north boundary edge
             lambda x: (SCREEN_WIDTH * x, -ASTEROID_MAX_RADIUS),
         ),
         (
-            (0, -1), # north boundary edge
+            (0, -1), # moves north (UP) and spawns at the south boundary edge
             lambda x: (SCREEN_WIDTH * x, SCREEN_HEIGHT + ASTEROID_MAX_RADIUS),
         ),
     )
