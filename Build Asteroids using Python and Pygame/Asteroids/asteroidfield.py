@@ -53,28 +53,28 @@ class AsteroidField(Updatable):
 
     def spawn(self, rad: float, px: float, py: float, vx: float, vy: float):
         """Instantiate a new asteroid with the given physical properties."""
-        Asteroid(px, py, rad, vx, vy)
+        Asteroid(px, py, rad, vx, vy) # auto-inserts itself in pygame groups
 
 
     def gestate(self):
         """Determine a random boundary edge, calculate trajectory parameters, 
         and spawn a new asteroid into the game world.
         """
-        self.spawn_timer = 0.0
-        edge = choice(AsteroidField.EDGES)
+        self.spawn_timer = 0.0 # reset counter for next spawn
+        edge = choice(AsteroidField.EDGES) # random spawning edge
     
-        vel = Vector2(edge[0])
+        vel = Vector2(edge[0]) # opposite moving direction to the spawning edge
         vel *= randint(ASTEROID_MIN_SPEED, ASTEROID_MAX_SPEED)
         vel.rotate_ip(randint(-ASTEROID_DRIFT_ANGLE, ASTEROID_DRIFT_ANGLE))
 
-        pos = edge[1](uniform(0, 1))
-        kind = randint(1, ASTEROID_KINDS)
+        pos = edge[1](uniform(0, 1)) # random position along edge’s varying axis
+        kind = randint(1, ASTEROID_KINDS) # random starting size multiplier
 
         self.spawn(ASTEROID_MIN_RADIUS * kind, pos[0], pos[1], vel.x, vel.y)
 
 
     @override
-    def update(self, Δ: float): # transpired time (Δ in seconds)
+    def update(self, Δ: float): # frame's transpired time (Δ in seconds)
         """Accumulate elapsed time and trigger a new asteroid spawn when the
         threshold interval is reached.
         """

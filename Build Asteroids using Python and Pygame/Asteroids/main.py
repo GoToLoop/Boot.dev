@@ -14,23 +14,24 @@ from platform import python_version
 
 if LOGGING: from logger import log_state
 
+# Each pygame aprite group container specializes in a different trait task:
+updatables: TypedGroup[Updatable] = TypedGroup()
+drawables: TypedGroup[Drawable] = TypedGroup()
+asteroids: TypedGroup[Spritable] = TypedGroup()
+
+# The specialized sprite groups each class auto-inserts each instantiation:
+Player.containers = updatables, drawables
+Asteroid.containers = updatables, drawables, asteroids
+AsteroidField.container = updatables
+
 def main():
     welcome_msg()
-
     pygame.init()
-    screen = pygame.display.set_mode( (SCREEN_WIDTH, SCREEN_HEIGHT) )
 
-    updatables: TypedGroup[Updatable] = TypedGroup()
-    drawables: TypedGroup[Drawable] = TypedGroup()
-    asteroids: TypedGroup[Spritable] = TypedGroup()
-
-    Player.containers = updatables, drawables
-    Player(SCREEN_WIDTH >> 1, SCREEN_HEIGHT >> 1)
-
-    Asteroid.containers = asteroids, updatables, drawables
-    AsteroidField.container = updatables
+    Player(SCREEN_WIDTH >> 1, SCREEN_HEIGHT >> 1) # starts center of screen
     AsteroidField() # spawns asteroids
 
+    screen = pygame.display.set_mode( (SCREEN_WIDTH, SCREEN_HEIGHT) )
     clock = pygame.time.Clock()
     Δ = 0.0 # frame-to-frame transpired time in seconds
 
@@ -57,9 +58,9 @@ def welcome_msg():
 
 
 def check_quit() -> bool: # True = QUIT(SDL 256)
-    quit_requested = pygame.event.peek(pygame.QUIT)
-    pygame.event.clear(pump = False)
-    return quit_requested
+    quit_requested = pygame.event.peek(pygame.QUIT) # checks for any QUIT events
+    pygame.event.clear(pump = False) # erases any leftover enqueued events
+    return quit_requested # True if any QUIT event was in the event's queue
 
 
 __name__ == "__main__" and main()
