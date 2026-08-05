@@ -21,24 +21,25 @@ class AsteroidField(Updatable):
 
     EDGES: Final[ Tuple[Edge, Edge, Edge, Edge] ] = (
         (
-            (1, 0), # east
+            (1, 0), # east boundary edge
             lambda y: (-ASTEROID_MAX_RADIUS, SCREEN_HEIGHT * y),
         ),
         (
-            (-1, 0), # west
+            (-1, 0), # west boundary edge
             lambda y: (SCREEN_WIDTH + ASTEROID_MAX_RADIUS, SCREEN_HEIGHT * y),
         ),
         (
-            (0, 1), # south
+            (0, 1), # south boundary edge
             lambda x: (SCREEN_WIDTH * x, -ASTEROID_MAX_RADIUS),
         ),
         (
-            (0, -1), # north
+            (0, -1), # north boundary edge
             lambda x: (SCREEN_WIDTH * x, SCREEN_HEIGHT + ASTEROID_MAX_RADIUS),
         ),
     )
     """Collection of the four screen boundary edges (east, west, south, north) 
-    used to randomize where new asteroids enter the playfield.
+    used to randomize where new asteroids spawn *just outside* the visible 
+    viewport, ensuring smooth entry into the playfield.
     """
 
     def __init__(self):

@@ -23,7 +23,7 @@ class TypedGroup(Group, Generic[T]):
     generic type ``[T]`` (where ``T`` is a ``pygame.sprite.Sprite`` subclass).
 
     Because this new generic type does not require the ``_SpriteSupportsGroup``
-    protocol anymore, non-fully compliant ``pygame.sprite.Sprite`` subclasseses
+    protocol anymore, non-fully compliant ``pygame.sprite.Sprite`` subclasses
     can be used as this container's generic type ``TypedGroup[T]``, allowing it
     to store any ``TypedGroup[U]`` where ``U`` lies between ``Sprite`` and ``T``
     in the inheritance chain: ``Sprite ⊇ U ⊇ T``.
