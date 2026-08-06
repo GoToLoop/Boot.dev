@@ -21,6 +21,18 @@ class CircleShape(Spritable, metaclass=ABCMeta):
         self.radius: float = radius
 
 
-    def collides_with(self, other: "CircleShape"):
+    def collides_with(self, other: "CircleShape") -> bool:
+        """Checks if this shape collides with another circular shape.
+
+        Calculates the squared Euclidean distance between the centers of both
+        circles and compares it to the squared sum of their radii for an
+        optimized collision check (avoiding expensive square root operations).
+
+        Args:
+            other (CircleShape): The other circular shape to check against.
+
+        Returns:
+            bool: True if the two circles overlap or touch, False otherwise.
+        """
         return self.position.distance_squared_to(other.position) <= (
             self.radius + other.radius) ** 2
