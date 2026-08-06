@@ -3,10 +3,15 @@ from typing import Callable, Final, Tuple, override
 
 from typedgroup import TypedGroup
 from traittypes import Updatable
-from constants import *
 
 from asteroid import Asteroid
 from pygame import sprite, Vector2
+
+from constants import (
+    SCREEN_WIDTH, SCREEN_HEIGHT, ASTEROID_MIN_RADIUS, ASTEROID_MAX_RADIUS,
+    ASTEROID_MIN_SPEED, ASTEROID_MAX_SPEED, ASTEROID_DRIFT_ANGLE,
+    ASTEROID_KINDS, ASTEROID_SPAWN_RATE_SECONDS
+)
 
 Edge = Tuple[Tuple[int, int], Callable[ [float], Tuple[float, float] ]]
 """Represents a spawn boundary edge, defined by a directional normalized vector
@@ -48,7 +53,8 @@ class AsteroidField(Updatable):
         group if specified."""
         if hasattr(self, "container"): super().__init__(self.container)
         else: sprite.Sprite.__init__(self)
-        self.spawn_timer: float = 0.0
+
+        self.spawn_timer: float = 0.0 # start asteroid spawn time counter
 
 
     def spawn(self, rad: float, px: float, py: float, vx: float, vy: float):
@@ -70,7 +76,7 @@ class AsteroidField(Updatable):
         pos = edge[1](uniform(0, 1)) # random position along edge’s varying axis
         kind = randint(1, ASTEROID_KINDS) # random starting size multiplier
 
-        self.spawn(ASTEROID_MIN_RADIUS * kind, pos[0], pos[1], vel.x, vel.y)
+        self.spawn(kind * ASTEROID_MIN_RADIUS, *pos, *vel)
 
 
     @override

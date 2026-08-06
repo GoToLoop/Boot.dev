@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 from circleshape import CircleShape
-from player import Player
-from asteroid import Asteroid
 from asteroidfield import AsteroidField
+from asteroid import Asteroid
+from shot import Shot
+from player import Player
 
 from typedgroup import TypedGroup
 from traittypes import Drawable, Updatable
@@ -14,15 +15,17 @@ from logger import log_event, log_state
 import pygame
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BG, LOGGING
 
-# Each pygame aprite group container specializes in a different trait task:
+# Each pygame sprite group container specializes in a different trait task:
 updatables: TypedGroup[Updatable] = TypedGroup()
 drawables: TypedGroup[Drawable] = TypedGroup()
 asteroids: TypedGroup[CircleShape] = TypedGroup()
+shots: TypedGroup[CircleShape] = TypedGroup()
 
-# The specialized sprite groups each class auto-inserts each instantiation:
-Player.containers = updatables, drawables
-Asteroid.containers = updatables, drawables, asteroids
+# Containers specify which sprite group(s) instances automatically join:
 AsteroidField.container = updatables
+Asteroid.containers = updatables, drawables, asteroids
+Shot.containers = updatables, drawables, shots
+Player.containers = updatables, drawables
 
 def main():
     welcome_msg()
