@@ -1,23 +1,23 @@
 #!/usr/bin/env python3
 
+from circleshape import CircleShape
+from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
-from player import Player
 
 from typedgroup import TypedGroup
-from traittypes import Drawable, Updatable, Spritable
+from traittypes import Drawable, Updatable
 
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BG, LOGGING
+from platform import python_version
+from logger import log_event, log_state
 
 import pygame
-from platform import python_version
-
-if LOGGING: from logger import log_state
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BG, LOGGING
 
 # Each pygame aprite group container specializes in a different trait task:
 updatables: TypedGroup[Updatable] = TypedGroup()
 drawables: TypedGroup[Drawable] = TypedGroup()
-asteroids: TypedGroup[Spritable] = TypedGroup()
+asteroids: TypedGroup[CircleShape] = TypedGroup()
 
 # The specialized sprite groups each class auto-inserts each instantiation:
 Player.containers = updatables, drawables
@@ -28,7 +28,7 @@ def main():
     welcome_msg()
     pygame.init()
 
-    Player(SCREEN_WIDTH >> 1, SCREEN_HEIGHT >> 1) # starts center of screen
+    player = Player(SCREEN_WIDTH >> 1, SCREEN_HEIGHT >> 1) # screen center
     AsteroidField() # spawns asteroids
 
     screen = pygame.display.set_mode( (SCREEN_WIDTH, SCREEN_HEIGHT) )
@@ -36,13 +36,14 @@ def main():
     Δ = 0.0 # frame-to-frame transpired time in seconds
 
     while True:
-        LOGGING and log_state() # pyright: ignore[reportPossiblyUnboundVariable]
+        LOGGING and log_state()
         if check_quit(): break
 
         screen.fill(BG)
+
         updatables.update(Δ)
-    
-        for shape in drawables: shape.draw(screen)
+        for drawing in drawables: drawing.draw(screen)
+        if check_death_by_collision(player): break
 
         pygame.display.flip() # render screen canvas surface
         Δ = clock.tick(FPS) / 1000 # ms to seconds (~16 to ~0.0167)
@@ -61,6 +62,15 @@ def check_quit() -> bool: # True = QUIT(SDL 256)
     quit_requested = pygame.event.peek(pygame.QUIT) # checks for any QUIT events
     pygame.event.clear(pump = False) # erases any leftover enqueued events
     return quit_requested # True if any QUIT event was in the event's queue
+
+
+def check_death_by_collision(ship: Player) -> bool: # True = Dead!
+    for circle in asteroids:
+        if circle.collides_with(ship):
+            LOGGING and log_event("player_hit")
+            print("\nGame over!")
+            return True
+    return False
 
 
 __name__ == "__main__" and main()
