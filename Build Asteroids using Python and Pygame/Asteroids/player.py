@@ -2,13 +2,15 @@ from circleshape import CircleShape
 from shot import Shot
 
 import pygame
-from typing import Final, Tuple, override
+from typing import Final, Literal, Tuple, cast, override
 
 from constants import (
     PLAYER_RADIUS, PLAYER_SPEED, PLAYER_TURN_SPEED,
     PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN_SECONDS,
     SHIP_WIDTH_RATIO, LINE_WIDTH, SHIP_COLOR
 )
+
+Sign = Literal[1, 0, -1]
 
 class Player(CircleShape):
     """Represents the player-controlled spaceship, handling input processing, 
@@ -100,14 +102,14 @@ class Player(CircleShape):
         self.shoot_cooldown -= Δ
         keys = pygame.key.get_pressed()
 
-        rot = (keys[pygame.K_d] or keys[pygame.K_RIGHT]) - (
-            keys[pygame.K_a] or keys[pygame.K_LEFT])
+        rot = cast(Sign, (keys[pygame.K_d] or keys[pygame.K_RIGHT]) - (
+            keys[pygame.K_a] or keys[pygame.K_LEFT]))
 
-        mov = (keys[pygame.K_w] or keys[pygame.K_UP]) - (
-            keys[pygame.K_s] or keys[pygame.K_DOWN])
+        mov = cast(Sign, (keys[pygame.K_w] or keys[pygame.K_UP]) - (
+            keys[pygame.K_s] or keys[pygame.K_DOWN]))
 
-        rot and self.rotate(rot * Δ)
-        mov and self.move(mov * Δ)
+        rot and self.rotate(rot * Δ) # +1: turn right; -1: turn left
+        mov and self.move(mov * Δ) # +1: forward; -1: backward
 
         keys[pygame.K_SPACE] and self.can_shoot() and self.shoot()
 
