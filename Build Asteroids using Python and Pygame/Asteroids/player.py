@@ -54,9 +54,7 @@ class Player(CircleShape):
 
 
     def move(self, Δ: float): # amount to move (Δ in seconds)
-        """Translate the player position forward or backward along its facing
-        vector.
-        """
+        """Translate player position forward/backward along its facing vector"""
         rotated = Player.unit_vector.rotate(self.rotation) # same dir as ship
         rotated *= PLAYER_SPEED * Δ # scaled to distance traveled
         self.position += rotated # updated player position
@@ -102,14 +100,15 @@ class Player(CircleShape):
         self.shoot_cooldown -= Δ
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_a] or keys[pygame.K_LEFT]: self.rotate(-Δ)
+        rot = (keys[pygame.K_d] or keys[pygame.K_RIGHT]) - (
+            keys[pygame.K_a] or keys[pygame.K_LEFT])
 
-        elif keys[pygame.K_d] or keys[pygame.K_RIGHT]: self.rotate(Δ)
+        mov = (keys[pygame.K_w] or keys[pygame.K_UP]) - (
+            keys[pygame.K_s] or keys[pygame.K_DOWN])
 
-        elif keys[pygame.K_w] or keys[pygame.K_UP]: self.move(Δ)
+        rot and self.rotate(rot * Δ)
+        mov and self.move(mov * Δ)
 
-        elif keys[pygame.K_s] or keys[pygame.K_DOWN]: self.move(-Δ)
+        keys[pygame.K_SPACE] and self.can_shoot() and self.shoot()
 
-        elif keys[pygame.K_SPACE] and self.can_shoot(): self.shoot()
-
-        elif keys[pygame.K_ESCAPE]: pygame.event.post(Player.quit_event)
+        keys[pygame.K_ESCAPE] and pygame.event.post(Player.quit_event)
