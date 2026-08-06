@@ -13,7 +13,7 @@ class Shot(CircleShape):
         bullet radius.
         """
         super().__init__(x, y, SHOT_RADIUS)
-    
+
 
     @override
     def draw(self, screen: SurfaceType):

@@ -42,7 +42,7 @@ def main():
         LOGGING and log_state()
         if check_quit(): break
 
-        screen.fill(BG)
+        screen.fill(BG) # clear screen canvas using background color
 
         updatables.update(Δ)
         for drawing in drawables: drawing.draw(screen)

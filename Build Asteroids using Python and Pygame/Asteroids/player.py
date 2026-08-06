@@ -5,7 +5,8 @@ import pygame
 from typing import Final, Tuple, override
 
 from constants import (
-    PLAYER_RADIUS, PLAYER_SPEED, PLAYER_TURN_SPEED, PLAYER_SHOOT_SPEED,
+    PLAYER_RADIUS, PLAYER_SPEED, PLAYER_TURN_SPEED,
+    PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN_SECONDS,
     SHIP_WIDTH_RATIO, LINE_WIDTH, SHIP_COLOR
 )
 
@@ -23,8 +24,23 @@ class Player(CircleShape):
         relative to the initial downward-facing origin vector.
         """
         super().__init__(x, y, PLAYER_RADIUS)
+
         self.rotation: float = 0.0
         """Offset on how many degrees to clockwise-rotate ``unit_vector``"""
+
+        self.shoot_cooldown: float = 0.0
+        """Countdown timer tracking the remaining time in seconds before the
+        player is allowed to fire another shot.
+        """
+
+
+    def can_shoot(self) -> bool:
+        """Check if the shoot cooldown has expired; if so, reset the cooldown 
+        timer and return True, otherwise return False.
+        """
+        if self.shoot_cooldown > 0: return False
+        self.shoot_cooldown = PLAYER_SHOOT_COOLDOWN_SECONDS
+        return True
 
 
     def shoot(self):
@@ -38,8 +54,8 @@ class Player(CircleShape):
 
 
     def move(self, Δ: float): # amount to move (Δ in seconds)
-        """Translate the player position forward or backward along
-        its facing vector.
+        """Translate the player position forward or backward along its facing
+        vector.
         """
         rotated = Player.unit_vector.rotate(self.rotation) # same dir as ship
         rotated *= PLAYER_SPEED * Δ # scaled to distance traveled
@@ -83,6 +99,7 @@ class Player(CircleShape):
         """Poll keyboard input to handle ship rotation, movement, shooting and
         enqueue a quit event during each frame.
         """
+        self.shoot_cooldown -= Δ
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_a] or keys[pygame.K_LEFT]: self.rotate(-Δ)
@@ -93,6 +110,6 @@ class Player(CircleShape):
 
         elif keys[pygame.K_s] or keys[pygame.K_DOWN]: self.move(-Δ)
 
-        elif keys[pygame.K_SPACE]: self.shoot()
+        elif keys[pygame.K_SPACE] and self.can_shoot(): self.shoot()
 
         elif keys[pygame.K_ESCAPE]: pygame.event.post(Player.quit_event)

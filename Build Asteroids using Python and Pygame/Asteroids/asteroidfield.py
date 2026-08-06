@@ -55,6 +55,7 @@ class AsteroidField(Updatable):
         else: sprite.Sprite.__init__(self)
 
         self.spawn_timer: float = 0.0 # start asteroid spawn time counter
+        """Elapsed time counter in seconds for next asteroid spawn."""
 
 
     def spawn(self, rad: float, px: float, py: float, vx: float, vy: float):
