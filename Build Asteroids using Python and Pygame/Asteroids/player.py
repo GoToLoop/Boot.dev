@@ -7,7 +7,7 @@ from typing import Final, Tuple, cast, override
 from constants import (
     PLAYER_RADIUS, PLAYER_SPEED, PLAYER_TURN_SPEED,
     PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN_SECONDS,
-    SHIP_WIDTH_RATIO, LINE_WIDTH, SHIP_COLOR, Sign
+    SHIP_WIDTH_RATIO, LINE_WIDTH, SHIP_COLOR, Signum
 )
 
 class Player(CircleShape):
@@ -100,10 +100,10 @@ class Player(CircleShape):
         self.shoot_cooldown -= Δ
         keys = pygame.key.get_pressed()
 
-        rot = cast(Sign, (keys[pygame.K_d] or keys[pygame.K_RIGHT]) - (
+        rot = cast(Signum, (keys[pygame.K_d] or keys[pygame.K_RIGHT]) - (
             keys[pygame.K_a] or keys[pygame.K_LEFT])) # 1, 0, -1
 
-        mov = cast(Sign, (keys[pygame.K_w] or keys[pygame.K_UP]) - (
+        mov = cast(Signum, (keys[pygame.K_w] or keys[pygame.K_UP]) - (
             keys[pygame.K_s] or keys[pygame.K_DOWN])) # 1, 0, -1
 
         rot and self.rotate(rot * Δ) # turn right: +1; turn left: -1

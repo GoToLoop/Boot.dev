@@ -1,7 +1,7 @@
 from pygame.colordict import THECOLORS
 from typing import Literal
 
-Sign = Literal[1, 0, -1]
+Signum = Literal[1, 0, -1]
 
 LOGGING = False
 
