@@ -1,5 +1,7 @@
 from pygame.colordict import THECOLORS
-from typehints import RGBAOutput
+from typing import Literal
+
+Sign = Literal[1, 0, -1]
 
 LOGGING = False
 
@@ -27,7 +29,7 @@ ASTEROID_DRIFT_ANGLE = 30
 
 SHOT_RADIUS = 5
 
-BG: RGBAOutput = THECOLORS["black"]
-SHIP_COLOR: RGBAOutput = THECOLORS["white"]
-ASTEROID_COLOR: RGBAOutput = THECOLORS["white"]
-BULLET_COLOR: RGBAOutput = THECOLORS["white"]
+BG = THECOLORS["black"]
+SHIP_COLOR = THECOLORS["white"]
+ASTEROID_COLOR = THECOLORS["white"]
+BULLET_COLOR = THECOLORS["white"]

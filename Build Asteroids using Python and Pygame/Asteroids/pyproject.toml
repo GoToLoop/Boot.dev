@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 
 dependencies = [
-    "pygame==2.6.1",
+    "pygame-ce>=2.5",
 ]
 
 [tool.pyright]
@@ -15,3 +15,8 @@ reportUnusedCallResult = "hint"
 reportUnusedExpression = "hint"
 reportDeprecated = "hint"
 reportUnannotatedClassAttribute = "hint"
+
+[tool.uv.workspace]
+members = [
+    "Asteroids",
+]
