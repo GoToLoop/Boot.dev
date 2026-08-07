@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from typing import override
-from pygame import SurfaceType, sprite
+from pygame import Surface, sprite
 
 class Updatable(sprite.Sprite, metaclass=ABCMeta):
     """Abstract class for objects that need to be updated each frame/tick."""
@@ -16,7 +16,7 @@ class Drawable(sprite.Sprite, metaclass=ABCMeta):
     """Abstract class for objects that can be rendered to a screen surface."""
 
     @abstractmethod
-    def draw(self, screen: SurfaceType):
+    def draw(self, screen: Surface):
         """Draw the object onto the given screen surface."""
         pass
 

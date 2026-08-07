@@ -1,3 +1,5 @@
+#:schema none
+
 [project]
 name = "Asteroids"
 version = "0.1.0"
@@ -10,13 +12,9 @@ dependencies = [
 ]
 
 [tool.pyright]
+# extends = "../../pyproject.toml"
 typeCheckingMode = "recommended"
 reportUnusedCallResult = "hint"
 reportUnusedExpression = "hint"
 reportDeprecated = "hint"
 reportUnannotatedClassAttribute = "hint"
-
-[tool.uv.workspace]
-members = [
-    "Asteroids",
-]

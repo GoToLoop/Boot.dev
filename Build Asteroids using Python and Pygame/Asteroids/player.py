@@ -2,7 +2,7 @@ from circleshape import CircleShape
 from shot import Shot
 
 import pygame
-from typing import Final, Literal, Tuple, cast, override
+from typing import Final, Tuple, cast, override
 
 from constants import (
     PLAYER_RADIUS, PLAYER_SPEED, PLAYER_TURN_SPEED,
@@ -85,7 +85,7 @@ class Player(CircleShape):
 
 
     @override
-    def draw(self, screen: pygame.SurfaceType):
+    def draw(self, screen: pygame.Surface):
         """Render the player ship as a polygon outline onto the target
         display surface.
         """

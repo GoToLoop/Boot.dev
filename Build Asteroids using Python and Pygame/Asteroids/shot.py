@@ -1,7 +1,7 @@
 from circleshape import CircleShape
 from constants import SHOT_RADIUS, LINE_WIDTH, BULLET_COLOR
 
-from pygame import draw, SurfaceType
+from pygame import draw, Surface
 from typing import override
 
 class Shot(CircleShape):
@@ -16,7 +16,7 @@ class Shot(CircleShape):
 
 
     @override
-    def draw(self, screen: SurfaceType):
+    def draw(self, screen: Surface):
         """Render the bullet as a circle outline onto the target surface."""
         draw.circle(
             screen, BULLET_COLOR, self.position, self.radius, LINE_WIDTH

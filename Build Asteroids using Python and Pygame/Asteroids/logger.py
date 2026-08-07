@@ -1,3 +1,6 @@
+# pyright: reportAny = hint
+# pyright: reportUnknownArgumentType = hint
+
 import inspect
 import json
 import math
@@ -91,7 +94,9 @@ def log_state() -> None:
 
                 sprites_data.append(sprite_info)
 
-            group_info: GroupInfo = {"count": len(value), "sprites": sprites_data}
+            group_info: GroupInfo = {
+                "count": len(value), "sprites": sprites_data
+            }
 
             game_state[key] = group_info
 
