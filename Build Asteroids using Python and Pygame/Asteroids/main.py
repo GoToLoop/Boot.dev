@@ -45,7 +45,7 @@ def main():
         screen.fill(BG) # clear screen canvas using background color
 
         updatables.update(Δ)
-        for drawing in drawables: drawing.draw(screen)
+        drawables.draw(screen)
         if check_death_by_collision(player): break
 
         pygame.display.flip() # render screen canvas surface

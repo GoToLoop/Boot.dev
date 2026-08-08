@@ -1,7 +1,11 @@
 # pyright: reportMissingTypeArgument = hint
+# pyright: reportIncompatibleMethodOverride = hint
 
+from traittypes import Drawable
 from typing import Generic, Iterator, List, TypeVar, cast, override
+
 from pygame.sprite import Group, Sprite
+from pygame.surface import Surface
 
 T = TypeVar("T", bound=Sprite, contravariant=True)
 """Contravariant so a field typed as ``TypedGroup[T]`` can be assigned any
@@ -27,16 +31,18 @@ class TypedGroup(Group, Generic[T]):
     can be used as this container's generic type ``TypedGroup[T]``, allowing it
     to store any ``TypedGroup[U]`` where ``U`` lies between ``Sprite`` and ``T``
     in the inheritance chain: ``Sprite ⊇ U ⊇ T``.
-
-    **Warning:** Type safety is enforced statically by the type checker only,
-    not at runtime. Invoking ``TypedGroup::draw()`` on an incompatible or 
-    incomplete derived sprite instance will still raise an exception!
     """
     @override
     def copy(self) -> "TypedGroup[T]": return super().copy()
 
     @override
     def sprites(self) -> List[T]: return cast(List[T], super().sprites())
+
+    @override
+    def draw(self, surface: Surface):
+        for sprite in self.sprites():
+            if isinstance(sprite, Drawable): sprite.draw(surface)
+
 
     @override
     def __iter__(self) -> Iterator[T]:
