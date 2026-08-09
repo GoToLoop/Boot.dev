@@ -21,6 +21,13 @@ class Asteroid(CircleShape):
 
 
     def split(self):
+        """Destroy this asteroid and spawn two smaller, faster asteroids.
+
+        If the asteroid is larger than ``ASTEROID_MIN_RADIUS``, two smaller
+        asteroids are created at the same position with velocities rotated in
+        opposite directions by a random split angle. Asteroids at or below the
+        minimum radius are destroyed without spawning new asteroids.
+        """
         self.kill()
         if self.radius <= ASTEROID_MIN_RADIUS: return
 
