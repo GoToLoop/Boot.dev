@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from circleshape import CircleShape
 from asteroidfield import AsteroidField
 from asteroid import Asteroid
 from shot import Shot
@@ -18,8 +17,8 @@ from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BG, LOGGING
 # Each pygame sprite group container specializes in a different trait task:
 updatables: TypedGroup[Updatable] = TypedGroup()
 drawables: TypedGroup[Drawable] = TypedGroup()
-asteroids: TypedGroup[CircleShape] = TypedGroup()
-shots: TypedGroup[CircleShape] = TypedGroup()
+asteroids: TypedGroup[Asteroid] = TypedGroup()
+shots: TypedGroup[Shot] = TypedGroup()
 
 # Containers specify which sprite group(s) instances automatically join:
 AsteroidField.container = updatables
@@ -46,6 +45,8 @@ def main():
 
         updatables.update(Δ)
         drawables.draw(screen)
+
+        check_for_asteroid_hit()
         if check_death_by_collision(player): break
 
         pygame.display.flip() # render screen canvas surface
@@ -65,6 +66,16 @@ def check_quit() -> bool: # True = QUIT(SDL 256)
     quit_requested = pygame.event.peek(pygame.QUIT) # checks for any QUIT events
     pygame.event.clear(pump = False) # erases any leftover enqueued events
     return quit_requested # True if any QUIT event was in the event's queue
+
+
+def check_for_asteroid_hit():
+    for asteroid in asteroids:
+        for shot in shots:
+            if shot.collides_with(asteroid):
+                LOGGING and log_event("asteroid_shot")
+                shot.kill()
+                asteroid.split()
+                break
 
 
 def check_death_by_collision(ship: Player) -> bool: # True = Dead!

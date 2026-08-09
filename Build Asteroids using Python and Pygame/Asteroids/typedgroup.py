@@ -41,7 +41,7 @@ class TypedGroup(Group, Generic[T]):
     @override
     def draw(self, surface: Surface):
         for sprite in self.sprites():
-            if isinstance(sprite, Drawable): sprite.draw(surface)
+            isinstance(sprite, Drawable) and sprite.draw(surface)
 
 
     @override

@@ -1,7 +1,7 @@
 from typedgroup import TypedGroup
 from traittypes import Spritable
 
-from typing import Tuple
+from typing import Self, Tuple
 from abc import ABCMeta
 
 from pygame import Vector2
@@ -10,7 +10,7 @@ class CircleShape(Spritable, metaclass=ABCMeta):
     """An abstract base class for circular game entities that possess position,
     velocity, a radius and insert themselves into typed Pygame group containers.
     """
-    containers: Tuple[TypedGroup["CircleShape"], ...] # declared but not created
+    containers: Tuple[TypedGroup[Self], ...] # declared but not created
 
     def __init__(self, x: float, y: float, radius: float):
         if hasattr(self, "containers"): super().__init__(*self.containers)

@@ -2,6 +2,10 @@ from pygame.colordict import THECOLORS
 from typing import Literal
 
 Signum = Literal[1, 0, -1]
+"""(positive, zero, negative)"""
+
+SIGNUMS = range(1, -2, -2)
+"""range values: (1, -1)"""
 
 LOGGING = False
 
@@ -24,8 +28,12 @@ ASTEROID_MAX_RADIUS = ASTEROID_MIN_RADIUS * ASTEROID_KINDS
 ASTEROID_MIN_SPEED = 40
 ASTEROID_MAX_SPEED = 100
 
-ASTEROID_SPAWN_RATE_SECONDS = 0.8
+ASTEROID_MIN_SPLIT_ANGLE = 20
+ASTEROID_MAX_SPLIT_ANGLE = 50
+
 ASTEROID_DRIFT_ANGLE = 30
+ASTEROID_SPAWN_RATE_SECONDS = 0.8
+ASTEROID_ACCEL = 1.2
 
 SHOT_RADIUS = 5
 
