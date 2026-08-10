@@ -48,23 +48,23 @@ class Asteroid(CircleShape):
         split angle ``θ``, then scales it by ``ASTEROID_ACCEL`` to make the
         fragment faster.
 
-        The resulting velocity components are returned as a
-        ``(vx, vy)`` tuple.
+        The resulting velocity components are returned as a ``(vx, vy)`` tuple.
 
         Args:
             θ (float): The angle by which to rotate the parent velocity vector
                        for this child asteroid.
 
-            _vel (Vector2): A private internal reusable vector to hold the
-                            intermediate velocity.
+            _vel (Vector2): An internal reusable vector to hold the intermediate
+                            velocity. This argument is intended for internal
+                            reuse and should not be relied upon by callers.
 
         Returns:
-            tuple[float, float]: the new velocity components ``(vx, vy)`` for
+            tuple[float, float]: The new velocity components ``(vx, vy)`` for
                                  the child asteroid.
         """
         _vel.update(self.velocity) # start same vel as destroyed asteroid
-        _vel.rotate_ip(θ) # split angle
-        _vel *= ASTEROID_ACCEL # make new split asteroids faster
+        _vel.rotate_ip(θ) # split new angle
+        _vel *= ASTEROID_ACCEL # make new split asteroid faster
         return _vel.x, _vel.y
 
 
