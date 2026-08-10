@@ -1,3 +1,5 @@
+# pyright: reportCallInDefaultInitializer = hint
+
 from circleshape import CircleShape
 from logger import log_event
 
@@ -28,21 +30,42 @@ class Asteroid(CircleShape):
         opposite directions by a random split angle. Asteroids at or below the
         minimum radius are destroyed without spawning new asteroids.
         """
-        self.kill()
-        if self.radius <= ASTEROID_MIN_RADIUS: return
-
+        if self.radius <= ASTEROID_MIN_RADIUS: return self.kill()
         LOGGING and log_event("asteroid_split")
 
         x, y = self.position
-        vel = Vector2()
         rad = self.radius - ASTEROID_MIN_RADIUS
         θ = uniform(ASTEROID_MIN_SPLIT_ANGLE, ASTEROID_MAX_SPLIT_ANGLE)
 
-        for signum in SIGNUMS: # rotate signum range: (1, -1)
-            vel.update(self.velocity) # start same vel as destroyed asteroid
-            vel.rotate_ip(signum * θ) # rotate 1st clockwise, 2nd anti-clockwise
-            vel *= ASTEROID_ACCEL # make new split asteroids faster
-            Asteroid(x, y, rad, *vel) # spawn smaller and at same position
+        self.init(x, y, rad, *self.gestate(θ)) # respawning using same instance
+        Asteroid(x, y, rad, *self.gestate(-θ)) # instantiating for the 2nd split
+
+
+    def gestate(self, θ: float, _vel: Vector2=Vector2()) -> tuple[float, float]:
+        """Compute the velocity components for a child asteroid after a split.
+
+        Starts from this asteroid's current velocity, rotates it by the given
+        split angle ``θ``, then scales it by ``ASTEROID_ACCEL`` to make the
+        fragment faster.
+
+        The resulting velocity components are returned as a
+        ``(vx, vy)`` tuple.
+
+        Args:
+            θ (float): The angle by which to rotate the parent velocity vector
+                       for this child asteroid.
+
+            _vel (Vector2): A private internal reusable vector to hold the
+                            intermediate velocity.
+
+        Returns:
+            tuple[float, float]: the new velocity components ``(vx, vy)`` for
+                                 the child asteroid.
+        """
+        _vel.update(self.velocity) # start same vel as destroyed asteroid
+        _vel.rotate_ip(θ) # split angle
+        _vel *= ASTEROID_ACCEL # make new split asteroids faster
+        return _vel.x, _vel.y
 
 
     @override
