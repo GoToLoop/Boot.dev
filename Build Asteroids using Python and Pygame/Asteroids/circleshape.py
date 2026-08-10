@@ -38,9 +38,6 @@ class CircleShape(Spritable, metaclass=ABCMeta):
         vx: float=0.0, vy: float=0.0
     ) -> Self:
         """Reinitialize this circular sprite with new position and radius.
-
-        Removes the instance from all current groups, then re-adds it to its
-        declared ``containers`` (if any), and resets position and velocity.
         Defaults to keeping old radius if not given a new one.
 
         Args:
@@ -53,9 +50,6 @@ class CircleShape(Spritable, metaclass=ABCMeta):
         Returns:
             Self: The re-initialized instance itself, allowing chained calls.
         """
-        self.kill()
-        hasattr(self, "containers") and super().__init__(*self.containers)
-
         self.position.update(x, y)
         self.velocity.update(vx, vy)
         if radius: self.radius = abs(radius)
