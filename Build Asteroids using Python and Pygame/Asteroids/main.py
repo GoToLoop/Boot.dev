@@ -12,7 +12,10 @@ from platform import python_version
 from logger import log_event, log_state
 
 import pygame
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BG, LOGGING
+
+from constants import (
+    SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BG, LOGGING, MILLIS_TO_SECONDS
+)
 
 # Each pygame sprite group container specializes in a different trait task:
 updatables: TypedGroup[Updatable] = TypedGroup()
@@ -50,7 +53,7 @@ def main():
         if check_death_by_collision(player): break
 
         pygame.display.flip() # render screen canvas surface
-        Δ = clock.tick(FPS) / 1000 # ms to seconds (~16 to ~0.0167)
+        Δ = clock.tick(FPS) / MILLIS_TO_SECONDS # ms to seconds (~16 to ~0.0167)
 
 
 def welcome_msg():
