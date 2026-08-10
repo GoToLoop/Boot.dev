@@ -4,9 +4,6 @@ from typing import Literal
 Signum = Literal[1, 0, -1]
 """(positive, zero, negative)"""
 
-SIGNUMS = range(1, -2, -2)
-"""range values: (1, -1)"""
-
 LOGGING = False
 
 SCREEN_WIDTH = 1280

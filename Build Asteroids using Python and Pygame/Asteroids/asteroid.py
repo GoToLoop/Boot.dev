@@ -4,7 +4,7 @@ from circleshape import CircleShape
 from logger import log_event
 
 from constants import (
-    ASTEROID_COLOR, ASTEROID_MIN_RADIUS, LINE_WIDTH, SIGNUMS, LOGGING,
+    ASTEROID_COLOR, ASTEROID_MIN_RADIUS, LINE_WIDTH, LOGGING,
     ASTEROID_MIN_SPLIT_ANGLE, ASTEROID_MAX_SPLIT_ANGLE, ASTEROID_ACCEL
 )
 
