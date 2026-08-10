@@ -2,7 +2,7 @@ from circleshape import CircleShape
 from shot import Shot
 
 import pygame
-from typing import Final, Tuple, cast, override
+from typing import Final, Self, Tuple, cast, override
 
 from constants import (
     PLAYER_RADIUS, PLAYER_SPEED, PLAYER_TURN_SPEED,
@@ -32,6 +32,16 @@ class Player(CircleShape):
         """Countdown timer tracking the remaining time in seconds before the
         player is allowed to fire another shot.
         """
+
+
+    @override
+    def init(self,
+        x: float, y: float,
+        radius: float=0.0,
+        vx: float=0.0, vy: float=0.0
+    ) -> Self:
+        self.rotation = self.shoot_cooldown = 0.0
+        return super().init(x, y, radius, vx, vy)
 
 
     def can_shoot(self) -> bool:
