@@ -47,8 +47,8 @@ class CircleShape(Spritable, metaclass=ABCMeta):
             x (float): New x-coordinate for the circle's center.
             y (float): New y-coordinate for the circle's center.
             radius (float): New optional radius of the circle.
-            vx (float): New x-component of the velocity vector
-            vy (float): New y-component of the velocity vector
+            vx (float): New x-component of the velocity vector.
+            vy (float): New y-component of the velocity vector.
 
         Returns:
             Self: The re-initialized instance itself, allowing chained calls.
