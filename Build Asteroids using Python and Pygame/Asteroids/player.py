@@ -1,13 +1,16 @@
+# pyright: reportCallInDefaultInitializer = hint
+
 from circleshape import CircleShape
 from shot import Shot
 
 import pygame
+from pygame import Surface, Vector2, draw, event, key
 from typing import Final, Self, Tuple, cast, override
 
 from constants import (
     PLAYER_RADIUS, PLAYER_SPEED, PLAYER_TURN_SPEED,
     PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN_SECONDS,
-    SHIP_WIDTH_RATIO, LINE_WIDTH, SHIP_COLOR, Signum
+    SHIP_WIDTH_RATIO, LINE_WIDTH, SHIP_COLOR, Signum, Tri
 )
 
 class Player(CircleShape):
@@ -15,8 +18,16 @@ class Player(CircleShape):
     rotation, movement, bullet-shooting and rendering on screen.
     """
 
-    unit_vector: Final = pygame.Vector2(0, 1) # starting by pointing downwards
-    quit_event: Final = pygame.event.Event(pygame.QUIT)
+    unit_vector: Final = Vector2(0, 1) # starting by pointing downwards
+    """Base vector pointing downwards (normalized length=1), used as the initial
+    reference direction for rotation and movement calculations for the ship and
+    for its projectiles' velocities.
+    """
+
+    quit_event: Final = event.Event(pygame.QUIT) # (SDL 256)
+    """Preconstructed ``pygame.QUIT`` event posted to the event queue when 
+    the player requests to exit the game via the ESC key.
+    """
 
     def __init__(self, x: float, y: float):
         """Initialize the player ship at the specified coordinates with 
@@ -63,11 +74,12 @@ class Player(CircleShape):
         bullet.velocity *= PLAYER_SHOOT_SPEED  # scale shot to move much faster
 
 
-    def move(self, Δ: float): # amount to move (Δ in seconds)
+    def move(self, Δ: float, _rotated: Vector2=Vector2()): # Δ: amount to move
         """Translate player position forward/backward along its facing vector"""
-        rotated = Player.unit_vector.rotate(self.rotation) # same dir as ship
-        rotated *= PLAYER_SPEED * Δ # scaled to distance traveled
-        self.position += rotated # updated player position
+        _rotated.update(Player.unit_vector)
+        _rotated.rotate_ip(self.rotation) # same dir as ship
+        _rotated *= PLAYER_SPEED * Δ # scaled to distance traveled
+        self.position += _rotated # updated player position
 
 
     def rotate(self, Δ: float): # amount to rotate (Δ in seconds)
@@ -75,31 +87,35 @@ class Player(CircleShape):
         self.rotation += PLAYER_TURN_SPEED * Δ
 
 
-    def triangle(self) -> Tuple[pygame.Vector2, pygame.Vector2, pygame.Vector2]:
+    def triangle(
+        self, _move: Vector2=Vector2(), _right: Vector2=Vector2()
+    ) -> Tri:
         """Calculate and return the three vertices of the ship's triangular
         isosceles polygon based on its current position and rotation.
         """
         pos = self.position; rad = self.radius; rot = self.rotation
 
-        forward = Player.unit_vector.rotate(rot) # same direction as ship now
-        forward *= rad # scaled to ship's radius
-         
-        right = Player.unit_vector.rotate(rot + 90) # clockwise sideways turn
-        right *= rad / SHIP_WIDTH_RATIO # scaled to a ratio of the ship's radius
+        _move.update(Player.unit_vector) # start by facing downwards
+        _move.rotate_ip(rot) # facing same direction as ship now
+        _move *= rad # scaled to ship's radius
 
-        a = pos + forward # a: front nose vertex
-        b = (c := pos - forward) - right # b: left-rear vertex; c: center-rear
-        c += right # c: right-rear vertex now
+        _right.update(Player.unit_vector) # start by facing downwards
+        _right.rotate_ip(rot + 90) # clockwise sideways turn
+        _right *= rad / SHIP_WIDTH_RATIO # scaled to a ratio of ship's radius
 
-        return a, b, c # isosceles shape
+        a = pos + _move # a: front nose vertex
+        b = (c := pos - _move) - _right # b: left-rear vertex; c: center-rear
+        c += _right # c: right-rear vertex now
+
+        return (a.x, a.y), (b.x, b.y), (c.x, c.y) # isosceles shape
 
 
     @override
-    def draw(self, screen: pygame.Surface):
+    def draw(self, screen: Surface):
         """Render the player ship as a polygon outline onto the target
         display surface.
         """
-        pygame.draw.polygon(screen, SHIP_COLOR, self.triangle(), LINE_WIDTH)
+        draw.polygon(screen, SHIP_COLOR, self.triangle(), LINE_WIDTH)
 
 
     @override
@@ -108,7 +124,7 @@ class Player(CircleShape):
         enqueue a quit event during each frame.
         """
         self.shoot_cooldown -= Δ
-        keys = pygame.key.get_pressed()
+        keys = key.get_pressed()
 
         rot = cast(Signum, (keys[pygame.K_d] or keys[pygame.K_RIGHT]) - (
             keys[pygame.K_a] or keys[pygame.K_LEFT])) # 1, 0, -1
@@ -121,4 +137,4 @@ class Player(CircleShape):
 
         keys[pygame.K_SPACE] and self.can_shoot() and self.shoot()
 
-        keys[pygame.K_ESCAPE] and pygame.event.post(Player.quit_event)
+        keys[pygame.K_ESCAPE] and event.post(Player.quit_event)
