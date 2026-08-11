@@ -5,7 +5,7 @@ from shot import Shot
 
 import pygame
 from pygame import Surface, Vector2, draw, event, key
-from typing import Final, Self, Tuple, cast, override
+from typing import Final, Self, cast, override
 
 from constants import (
     PLAYER_RADIUS, PLAYER_SPEED, PLAYER_TURN_SPEED,

@@ -1,3 +1,5 @@
+# pyright: reportCallInDefaultInitializer = hint
+
 from random import choice, randint, uniform
 from typing import Callable, Final, Tuple, override
 
@@ -63,21 +65,21 @@ class AsteroidField(Updatable):
         Asteroid(px, py, rad, vx, vy) # auto-inserts itself in pygame groups
 
 
-    def gestate(self):
+    def gestate(self, _vel: Vector2=Vector2()):
         """Determine a random boundary edge, calculate trajectory parameters, 
         and spawn a new asteroid into the game world.
         """
         self.spawn_timer = 0.0 # reset counter for next spawn
         edge = choice(AsteroidField.EDGES) # random spawning edge
     
-        vel = Vector2(edge[0]) # opposite moving direction to the spawning edge
-        vel *= randint(ASTEROID_MIN_SPEED, ASTEROID_MAX_SPEED)
-        vel.rotate_ip(randint(-ASTEROID_DRIFT_ANGLE, ASTEROID_DRIFT_ANGLE))
+        _vel.update(edge[0]) # opposite moving direction to the spawning edge
+        _vel *= randint(ASTEROID_MIN_SPEED, ASTEROID_MAX_SPEED)
+        _vel.rotate_ip(randint(-ASTEROID_DRIFT_ANGLE, ASTEROID_DRIFT_ANGLE))
 
-        pos = edge[1](uniform(0, 1)) # random position along edge’s varying axis
+        pos = edge[1](uniform(0, 1)) # random position along edge's varying axis
         kind = randint(1, ASTEROID_KINDS) # random starting size multiplier
 
-        self.spawn(kind * ASTEROID_MIN_RADIUS, *pos, *vel)
+        self.spawn(kind * ASTEROID_MIN_RADIUS, *pos, *_vel)
 
 
     @override
