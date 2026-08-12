@@ -25,5 +25,8 @@ class Shot(CircleShape):
 
     @override
     def update(self, Δ: float): # amount to move (Δ in seconds)
-        """Update bullet's position based on its velocity & elapsed time."""
+        """Update bullet's position based on its velocity & elapsed time.
+        Kill it if it flies beyond the visible screen.
+        """
         self.position += self.velocity * Δ
+        self.check_outside() and self.kill()

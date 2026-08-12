@@ -2,6 +2,7 @@
 
 from circleshape import CircleShape
 from shot import Shot
+from typehints import Signum, Tri
 
 import pygame
 from pygame import Surface, Vector2, draw, event, key
@@ -10,7 +11,7 @@ from typing import Final, Self, cast, override
 from constants import (
     PLAYER_RADIUS, PLAYER_SPEED, PLAYER_TURN_SPEED,
     PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN_SECONDS,
-    SHIP_WIDTH_RATIO, LINE_WIDTH, SHIP_COLOR, Signum, Tri
+    SHIP_WIDTH_RATIO, LINE_WIDTH, SHIP_COLOR
 )
 
 class Player(CircleShape):
@@ -123,6 +124,8 @@ class Player(CircleShape):
         """Poll keyboard input to handle ship rotation, movement, shooting and
         enqueue a quit event during each frame.
         """
+        self.teleport(self.check_outside()) # wrap around screen edges
+
         self.shoot_cooldown -= Δ
         keys = key.get_pressed()
 

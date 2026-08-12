@@ -1,16 +1,26 @@
 from typedgroup import TypedGroup
 from traittypes import Spritable
+from typehints import Cardinal
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
-from typing import Self, Tuple
+from typing import Callable, Final, Self, Tuple
 from abc import ABCMeta
-
 from pygame import Vector2
+
+Edge = Callable[ ["CircleShape"], bool ]
 
 class CircleShape(Spritable, metaclass=ABCMeta):
     """An abstract base class for circular game entities that possess position,
     velocity, a radius and insert themselves into typed Pygame group containers.
     """
     containers: Tuple[TypedGroup[Self], ...] # declared but not created yet
+
+    EDGES: Final[ Tuple[Edge, Edge, Edge, Edge] ] = (
+        lambda c: c.position.x < -c.radius*2,               # WEST
+        lambda c: c.position.x > SCREEN_WIDTH + c.radius*2, # EAST
+        lambda c: c.position.y < -c.radius*2,               # NORTH
+        lambda c: c.position.y > SCREEN_HEIGHT + c.radius*2 # SOUTH
+    )
 
     def __init__(self, x: float, y: float, radius: float):
         """Initialize a new circular sprite with position and radius.
@@ -72,3 +82,35 @@ class CircleShape(Spritable, metaclass=ABCMeta):
         """
         return self.position.distance_squared_to(other.position) <= (
             self.radius + other.radius) ** 2
+
+
+    def check_outside(self) -> Cardinal:
+        """Determine whether this circle has crossed the canvas boundary.
+
+        Returns:
+            Cardinal: One of the following enum values (0-4):
+
+            - Cardinal.INSIDE → circle is still within the visible screen (0)
+            - Cardinal.WEST   → circle fully crossed the west edge        (1)
+            - Cardinal.EAST   → circle fully crossed the east edge        (2)
+            - Cardinal.NORTH  → circle fully crossed the north edge       (3)
+            - Cardinal.SOUTH  → circle fully crossed the south edge       (4)
+        """
+        for idx, edge_check in enumerate(CircleShape.EDGES, 1):
+            if edge_check(self): return Cardinal(idx)
+        return Cardinal.INSIDE
+
+
+    def teleport(self, edge_index: Cardinal):
+        """Teleport this circle shape to the opposite side of the canvas."""
+        match edge_index:
+            case Cardinal.INSIDE: # still inside visible screen
+                pass
+            case Cardinal.WEST:   # west → move to east
+                self.position.x = SCREEN_WIDTH + self.radius
+            case Cardinal.EAST:   # east → move to west
+                self.position.x = -self.radius
+            case Cardinal.NORTH:  # north → move to south
+                self.position.y = SCREEN_HEIGHT + self.radius
+            case Cardinal.SOUTH:  # south → move to north
+                self.position.y = -self.radius

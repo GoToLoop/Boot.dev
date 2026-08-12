@@ -80,3 +80,4 @@ class Asteroid(CircleShape):
     def update(self, Δ: float): # amount to move (Δ in seconds)
         """Update asteroid's position based on its velocity & elapsed time."""
         self.position += self.velocity * Δ
+        self.teleport(self.check_outside()) # wrap around screen edges
