@@ -31,12 +31,14 @@ Player.containers = updatables, drawables
 
 def main():
     welcome_msg()
-    pygame.init()
-
-    player = Player(SCREEN_WIDTH >> 1, SCREEN_HEIGHT >> 1) # screen center
-    AsteroidField() # spawns asteroids
+    print(pygame.init(), "started submodules")
 
     screen = pygame.display.set_mode( (SCREEN_WIDTH, SCREEN_HEIGHT) )
+    pygame.display.set_caption("Asteroids")
+
+    player = Player(SCREEN_WIDTH >> 1, SCREEN_HEIGHT >> 1) # screen center
+    AsteroidField() # spawns asteroids at a fixed time
+
     clock = pygame.time.Clock()
     Δ = 0.0 # frame-to-frame transpired time in seconds
 
@@ -62,7 +64,7 @@ def welcome_msg():
     print("On Python version", python_version())
 
     print("\nScreen width:", SCREEN_WIDTH)
-    print("Screen height:", SCREEN_HEIGHT)
+    print("Screen height:", SCREEN_HEIGHT, '\n')
 
 
 def check_quit() -> bool: # True = QUIT(SDL 256)
