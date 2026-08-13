@@ -83,7 +83,7 @@ class CircleShape(Spritable, metaclass=ABCMeta):
         circles and compares it to the squared sum of their radii for an
         optimized collision check (avoiding expensive square root operations).
 
-        Args:
+        Arg:
             other (CircleShape): The other circular shape to check against.
 
         Returns:
@@ -113,7 +113,7 @@ class CircleShape(Spritable, metaclass=ABCMeta):
     def teleport(self, edge_index: Cardinal):
         """Teleport this circle shape to the opposite side of the canvas.
 
-        Args:
+        Arg:
             edge_index (Cardinal): The edge boundary index that was crossed,
             dictating the destination side for the wrap-around.
         """
@@ -133,7 +133,7 @@ class CircleShape(Spritable, metaclass=ABCMeta):
     def wrap_around_or_kill(self, wrap: bool=False):
         """Wrap the circle around the screen boundaries or kill it if outside.
 
-        Args:
+        Arg:
             wrap (bool): If True, wraps around the screen; if False, kills the
             sprite when it crosses an edge. Defaults to False.
         """
@@ -145,7 +145,7 @@ class CircleShape(Spritable, metaclass=ABCMeta):
         """Restrict/clamp this circle shape's position to stay within the canvas
         boundary.
 
-        Args:
+        Arg:
             edge_index (Cardinal): The edge boundary index that was crossed,
             dictating which boundary wall to block advance against.
         """
@@ -166,7 +166,7 @@ class CircleShape(Spritable, metaclass=ABCMeta):
         """Wrap the circle around the screen boundaries or block advance by
         staying inside.
 
-        Args:
+        Arg:
             wrap (bool): If True, wraps around the screen; if False, blocks
             advance against the boundary wall when crossed. Defaults to False.
         """

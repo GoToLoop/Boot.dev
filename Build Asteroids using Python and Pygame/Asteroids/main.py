@@ -1,43 +1,30 @@
 #!/usr/bin/env python3
 
 from asteroidfield import AsteroidField
-from asteroid import Asteroid
-from shot import Shot
 from player import Player
+from headupdisplay import Hud
 
-from typedgroup import TypedGroup
-from traittypes import Drawable, Updatable
-
-from platform import python_version
 from logger import log_event, log_state
+from platform import python_version
 
 import pygame
+from spritegroups import updatables, drawables, asteroids, shots
 
 from constants import (
     SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BG, LOGGING, MILLIS_TO_SECONDS
 )
 
-# Each pygame sprite group container specializes in a different trait task:
-updatables: TypedGroup[Updatable] = TypedGroup()
-drawables: TypedGroup[Drawable] = TypedGroup()
-asteroids: TypedGroup[Asteroid] = TypedGroup()
-shots: TypedGroup[Shot] = TypedGroup()
-
-# Containers specify which sprite group(s) instances automatically join:
-AsteroidField.container = updatables
-Asteroid.containers = updatables, drawables, asteroids
-Shot.containers = updatables, drawables, shots
-Player.containers = updatables, drawables
-
 def main():
     welcome_msg()
-    print(pygame.init(), "started submodules")
+    print(pygame.init(), "(started/failed) submodules")
 
     screen = pygame.display.set_mode( (SCREEN_WIDTH, SCREEN_HEIGHT) )
     pygame.display.set_caption("Asteroids")
 
     player = Player(SCREEN_WIDTH >> 1, SCREEN_HEIGHT >> 1) # screen center
     AsteroidField() # spawns asteroids at a fixed time
+
+    hud = Hud() # renders & tracks the current length of asteroids & shots
 
     clock = pygame.time.Clock()
     Δ = 0.0 # frame-to-frame transpired time in seconds
@@ -53,6 +40,8 @@ def main():
 
         check_for_asteroid_hit()
         if check_death_by_collision(player): break
+
+        hud.render_group_counts(screen)
 
         pygame.display.flip() # render screen canvas surface
         Δ = clock.tick(FPS) / MILLIS_TO_SECONDS # ms to seconds (~16 to ~0.0167)
