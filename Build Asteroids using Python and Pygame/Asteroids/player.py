@@ -11,7 +11,7 @@ from typing import Final, Self, cast, override
 from constants import (
     PLAYER_RADIUS, PLAYER_SPEED, PLAYER_TURN_SPEED,
     PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN_SECONDS,
-    SHIP_WIDTH_RATIO, LINE_WIDTH, SHIP_COLOR
+    SHIP_WIDTH_RATIO, LINE_WIDTH, SHIP_COLOR, SHIP_WRAP_AROUND
 )
 
 class Player(CircleShape):
@@ -124,7 +124,7 @@ class Player(CircleShape):
         """Poll keyboard input to handle ship rotation, movement, shooting and
         enqueue a quit event during each frame.
         """
-        self.teleport(self.check_outside()) # wrap around screen edges
+        self.wrap_around_or_block_advance(SHIP_WRAP_AROUND)
 
         self.shoot_cooldown -= Δ
         keys = key.get_pressed()

@@ -1,5 +1,5 @@
 from circleshape import CircleShape
-from constants import SHOT_RADIUS, LINE_WIDTH, BULLET_COLOR
+from constants import SHOT_RADIUS, LINE_WIDTH, BULLET_COLOR, BULLET_WRAP_AROUND
 
 from pygame import draw, Surface
 from typing import override
@@ -26,7 +26,7 @@ class Shot(CircleShape):
     @override
     def update(self, Δ: float): # amount to move (Δ in seconds)
         """Update bullet's position based on its velocity & elapsed time.
-        Kill it if it flies beyond the visible screen.
+        Either wrap-around or kill it if it flies beyond the visible screen.
         """
         self.position += self.velocity * Δ
-        self.check_outside() and self.kill()
+        self.wrap_around_or_kill(BULLET_WRAP_AROUND)

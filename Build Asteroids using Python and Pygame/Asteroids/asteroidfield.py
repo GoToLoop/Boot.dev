@@ -26,6 +26,9 @@ class AsteroidField(Updatable):
     at random screen edges to continuously populate the game world.
     """
     container: TypedGroup[Updatable] # merely declared, not created yet
+    """The typed pygame sprite group whose instances of this class automatically
+    register into upon initialization, if defined.
+    """
 
     EDGES: Final[ Tuple[Edge, Edge, Edge, Edge] ] = (
         (

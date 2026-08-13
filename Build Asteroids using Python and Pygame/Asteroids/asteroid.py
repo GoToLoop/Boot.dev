@@ -4,8 +4,9 @@ from circleshape import CircleShape
 from logger import log_event
 
 from constants import (
-    ASTEROID_COLOR, ASTEROID_MIN_RADIUS, LINE_WIDTH, LOGGING,
-    ASTEROID_MIN_SPLIT_ANGLE, ASTEROID_MAX_SPLIT_ANGLE, ASTEROID_ACCEL
+    ASTEROID_MIN_RADIUS, ASTEROID_COLOR, LINE_WIDTH,
+    ASTEROID_MIN_SPLIT_ANGLE, ASTEROID_MAX_SPLIT_ANGLE, ASTEROID_ACCEL,
+    LOGGING, ASTEROID_WRAP_AROUND
 )
 
 from pygame import draw, Surface, Vector2
@@ -78,6 +79,8 @@ class Asteroid(CircleShape):
 
     @override
     def update(self, Δ: float): # amount to move (Δ in seconds)
-        """Update asteroid's position based on its velocity & elapsed time."""
+        """Update asteroid's position based on its velocity & elapsed time.
+        Either wrap-around or kill it if it flies beyond the visible screen.
+        """
         self.position += self.velocity * Δ
-        self.teleport(self.check_outside()) # wrap around screen edges
+        self.wrap_around_or_kill(ASTEROID_WRAP_AROUND)

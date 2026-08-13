@@ -8,12 +8,18 @@ from abc import ABCMeta
 from pygame import Vector2
 
 Edge = Callable[ ["CircleShape"], bool ]
+"""Type alias for a boundary check predicate callback function that accepts a
+``CircleShape`` and returns True if it has crossed a specific edge.
+"""
 
 class CircleShape(Spritable, metaclass=ABCMeta):
     """An abstract base class for circular game entities that possess position,
     velocity, a radius and insert themselves into typed Pygame group containers.
     """
     containers: Tuple[TypedGroup[Self], ...] # declared but not created yet
+    """A tuple of typed pygame sprite groups whose instances of this class
+    automatically register into upon initialization, if defined.
+    """
 
     EDGES: Final[ Tuple[Edge, Edge, Edge, Edge] ] = (
         lambda c: c.position.x < -c.radius*2,               # WEST
@@ -21,6 +27,9 @@ class CircleShape(Spritable, metaclass=ABCMeta):
         lambda c: c.position.y < -c.radius*2,               # NORTH
         lambda c: c.position.y > SCREEN_HEIGHT + c.radius*2 # SOUTH
     )
+    """A tuple of boundary check lambda functions corresponding to the ``West``,
+    ``East``, ``North``, and ``South`` edges of the screen canvas respectively.
+    """
 
     def __init__(self, x: float, y: float, radius: float):
         """Initialize a new circular sprite with position and radius.
@@ -97,12 +106,17 @@ class CircleShape(Spritable, metaclass=ABCMeta):
             - Cardinal.SOUTH  → circle fully crossed the south edge       (4)
         """
         for idx, edge_check in enumerate(CircleShape.EDGES, 1):
-            if edge_check(self): return Cardinal(idx)
-        return Cardinal.INSIDE
+            if edge_check(self): return Cardinal(idx) # (1-4)
+        return Cardinal.INSIDE # (0)
 
 
     def teleport(self, edge_index: Cardinal):
-        """Teleport this circle shape to the opposite side of the canvas."""
+        """Teleport this circle shape to the opposite side of the canvas.
+
+        Args:
+            edge_index (Cardinal): The edge boundary index that was crossed,
+            dictating the destination side for the wrap-around.
+        """
         match edge_index:
             case Cardinal.INSIDE: # still inside visible screen
                 pass
@@ -114,3 +128,47 @@ class CircleShape(Spritable, metaclass=ABCMeta):
                 self.position.y = SCREEN_HEIGHT + self.radius
             case Cardinal.SOUTH:  # south → move to north
                 self.position.y = -self.radius
+
+
+    def wrap_around_or_kill(self, wrap: bool=False):
+        """Wrap the circle around the screen boundaries or kill it if outside.
+
+        Args:
+            wrap (bool): If True, wraps around the screen; if False, kills the
+            sprite when it crosses an edge. Defaults to False.
+        """
+        side = self.check_outside() # (0-4)
+        self.teleport(side) if wrap else side and self.kill()
+
+
+    def stay(self, edge_index: Cardinal):
+        """Restrict/clamp this circle shape's position to stay within the canvas
+        boundary.
+
+        Args:
+            edge_index (Cardinal): The edge boundary index that was crossed,
+            dictating which boundary wall to block advance against.
+        """
+        match edge_index:
+            case Cardinal.INSIDE: # still inside visible screen
+                pass
+            case Cardinal.WEST:   # west boundary limit
+                self.position.x = -self.radius
+            case Cardinal.EAST:   # east boundary limit
+                self.position.x = SCREEN_WIDTH + self.radius
+            case Cardinal.NORTH:  # north boundary limit
+                self.position.y = -self.radius
+            case Cardinal.SOUTH:  # south boundary limit
+                self.position.y = SCREEN_HEIGHT + self.radius
+
+
+    def wrap_around_or_block_advance(self, wrap: bool=False):
+        """Wrap the circle around the screen boundaries or block advance by
+        staying inside.
+
+        Args:
+            wrap (bool): If True, wraps around the screen; if False, blocks
+            advance against the boundary wall when crossed. Defaults to False.
+        """
+        side = self.check_outside() # (0-4)
+        self.teleport(side) if wrap else self.stay(side)
