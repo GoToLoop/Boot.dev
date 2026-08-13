@@ -1,7 +1,7 @@
-from pygame import Surface, font
+from pygame import Surface, font, time
 from typing import Final
 
-from constants import FONT_SIZE, FONT_OFFSET, FONT_COLOR
+from constants import FONT_SIZE, FONT_OFFSET, FONT_COLOR, HUDS
 from spritegroups import asteroids, shots
 
 class Hud:
@@ -20,19 +20,16 @@ class Hud:
         self.font: font.Font = font.SysFont(None, font_size)
 
 
-    def render_group_counts(self, surface: Surface):
-        """Render asteroid and shot counts onto a display surface.
+    def render_info(self, surface: Surface, clock: time.Clock):
+        """Vertically render fps, asteroid & shot counts onto a display surface.
 
-        The asteroid count is drawn at ``FONT_OFFSET`` from the top-left
-        corner. The shot count is drawn below the asteroid count.
-
-        Arg:
-            surface: Surface on which the HUD text is rendered.
+        Args:
+            surface: Surface on which the HuD text is rendered.
+            clock: Pygame clock used to retrieve the current frame rate.
         """
-        txt = Hud.AST_TXT % len(asteroids)
-        txt_surface = self.font.render(txt, True, FONT_COLOR)
-        surface.blit(txt_surface, (FONT_OFFSET, FONT_OFFSET))
+        infos = clock.get_fps(), len(asteroids), len(shots)
 
-        txt = Hud.SHOTS_TXT % len(shots)
-        txt_surface = self.font.render(txt, True, FONT_COLOR)
-        surface.blit(txt_surface, (FONT_OFFSET, FONT_OFFSET + self.font_size))
+        for idx, hud in enumerate(HUDS):
+            txt_surface = self.font.render(hud % infos[idx], True, FONT_COLOR)
+            txt_coords = FONT_OFFSET, FONT_OFFSET + self.font_size * idx
+            surface.blit(txt_surface, txt_coords)

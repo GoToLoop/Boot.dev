@@ -44,3 +44,9 @@ SHIP_COLOR = THECOLORS["white"]
 ASTEROID_COLOR = THECOLORS["white"]
 BULLET_COLOR = THECOLORS["white"]
 FONT_COLOR = THECOLORS["white"]
+
+HUDS = (
+    "FPS: %.2f",
+    "Asteroids: %d",
+    "Shots: %d"
+)

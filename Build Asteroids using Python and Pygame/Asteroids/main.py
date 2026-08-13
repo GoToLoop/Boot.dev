@@ -41,7 +41,7 @@ def main():
         check_for_asteroid_hit()
         if check_death_by_collision(player): break
 
-        hud.render_group_counts(screen)
+        hud.render_info(screen, clock)
 
         pygame.display.flip() # render screen canvas surface
         Δ = clock.tick(FPS) / MILLIS_TO_SECONDS # ms to seconds (~16 to ~0.0167)
