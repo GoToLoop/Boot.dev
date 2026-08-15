@@ -2,6 +2,8 @@
 
 from asteroidfield import AsteroidField
 from player import Player
+from score import score
+
 from headupdisplay import Hud
 
 from logger import log_event, log_state
@@ -31,7 +33,10 @@ def main():
 
     while True:
         LOGGING and log_state()
-        if check_quit(): break
+
+        if check_quit():
+            print(); print(score)
+            break
 
         screen.fill(BG) # clear screen canvas using background color
 
@@ -68,7 +73,7 @@ def check_for_asteroid_hit():
             if shot.collides_with(asteroid):
                 LOGGING and log_event("asteroid_shot")
                 shot.kill()
-                asteroid.split()
+                asteroid.increase_score().split()
                 break
 
 
@@ -76,7 +81,8 @@ def check_death_by_collision(ship: Player) -> bool: # True = Dead!
     for circle in asteroids:
         if circle.collides_with(ship):
             LOGGING and log_event("player_hit")
-            print("\nGame over!")
+            print("\nGame over!\n")
+            print(score.update_high_score())
             return True
     return False
 

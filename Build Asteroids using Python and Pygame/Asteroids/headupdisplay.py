@@ -3,6 +3,7 @@ from typing import Final
 
 from constants import FONT_SIZE, FONT_OFFSET, FONT_COLOR, HUDS
 from spritegroups import asteroids, shots
+from score import score
 
 class Hud:
     """Display the current number of asteroids and shots."""
@@ -27,7 +28,11 @@ class Hud:
             surface: Surface on which the HuD text is rendered.
             clock: Pygame clock used to retrieve the current frame rate.
         """
-        infos = clock.get_fps(), len(asteroids), len(shots)
+        infos = (
+            score.current_score, score.high_score,
+            clock.get_fps(),
+            len(asteroids), len(shots)
+        )
 
         for idx, hud in enumerate(HUDS):
             txt_surface = self.font.render(hud % infos[idx], True, FONT_COLOR)

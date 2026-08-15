@@ -1,17 +1,18 @@
 # pyright: reportCallInDefaultInitializer = hint
 
 from circleshape import CircleShape
+from score import score
 from logger import log_event
 
 from constants import (
     ASTEROID_MIN_RADIUS, ASTEROID_COLOR, LINE_WIDTH,
     ASTEROID_MIN_SPLIT_ANGLE, ASTEROID_MAX_SPLIT_ANGLE, ASTEROID_ACCEL,
-    LOGGING, ASTEROID_WRAP_AROUND
+    LOGGING, ASTEROID_WRAP_AROUND, ASTEROID_POINTS
 )
 
 from pygame import draw, Surface, Vector2
 from random import uniform
-from typing import override
+from typing import override, Self
 
 class Asteroid(CircleShape):
     """Represents a destructible asteroid obstacle that moves across the
@@ -21,6 +22,13 @@ class Asteroid(CircleShape):
         """Initialize an asteroid with position, size, and initial velocity."""
         super().__init__(x, y, radius)
         self.velocity.update(vx, vy)
+
+
+    def increase_score(self) -> Self:
+        """Increase the player's score based on the asteroid's size."""
+        kind = int(self.radius // ASTEROID_MIN_RADIUS) - 1
+        score.current_score += ASTEROID_POINTS[kind]
+        return self
 
 
     def split(self):

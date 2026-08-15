@@ -24,6 +24,9 @@ PLAYER_SHOOT_COOLDOWN_SECONDS = 0.3
 SHIP_WIDTH_RATIO = 1.5
 
 ASTEROID_KINDS = 3
+ASTEROID_POINTS = 100, 50, 25
+"""Points awarded for (Small, Medium, Large) asteroids."""
+
 ASTEROID_MIN_RADIUS = 20
 ASTEROID_MAX_RADIUS = ASTEROID_MIN_RADIUS * ASTEROID_KINDS
 
@@ -46,6 +49,8 @@ BULLET_COLOR = THECOLORS["white"]
 FONT_COLOR = THECOLORS["white"]
 
 HUDS = (
+    "Score: %d",
+    "High Score: %d",
     "FPS: %.2f",
     "Asteroids: %d",
     "Shots: %d"
