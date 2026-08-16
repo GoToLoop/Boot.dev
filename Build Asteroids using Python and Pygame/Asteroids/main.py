@@ -10,23 +10,25 @@ from logger import log_event, log_state
 from platform import python_version
 
 import pygame
+import asyncio
+
 from spritegroups import updatables, drawables, asteroids, shots
 
 from constants import (
     SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BG, LOGGING, MILLIS_TO_SECONDS
 )
 
-def main():
+async def main():
     welcome_msg()
     print(pygame.init(), "(started/failed) submodules")
 
     screen = pygame.display.set_mode( (SCREEN_WIDTH, SCREEN_HEIGHT) )
     pygame.display.set_caption("Asteroids")
 
+    hud = Hud() # renders & tracks the current length of asteroids & shots
+
     player = Player(SCREEN_WIDTH >> 1, SCREEN_HEIGHT >> 1) # screen center
     AsteroidField() # spawns asteroids at a fixed time
-
-    hud = Hud() # renders & tracks the current length of asteroids & shots
 
     clock = pygame.time.Clock()
     Δ = 0.0 # frame-to-frame transpired time in seconds
@@ -50,6 +52,7 @@ def main():
 
         pygame.display.flip() # render screen canvas surface
         Δ = clock.tick(FPS) / MILLIS_TO_SECONDS # ms to seconds (~16 to ~0.0167)
+        pyscript and await asyncio.sleep(1/FPS)
 
 
 def welcome_msg():
@@ -87,4 +90,12 @@ def check_death_by_collision(ship: Player) -> bool: # True = Dead!
     return False
 
 
-__name__ == "__main__" and main()
+pyscript = True
+
+if __name__ == "__main__":
+    try: # Check if we're in an async context (PyScript)
+        asyncio.get_running_loop()
+        asyncio.create_task(main())
+    except RuntimeError: # No async context (local Python)
+        pyscript = False
+        asyncio.run(main())

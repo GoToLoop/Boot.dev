@@ -1,9 +1,16 @@
 #:schema none
 
+name = 'Asteroids'
+version = '0.9.0'
+author_name = 'GoToLoop'
+license = 'Unlicense'
+description = 'Boot.dev: Asteroids'
+url = 'https://GitHub.com/GoToLoop/Boot.dev'
+
 [project]
 name = "Asteroids"
-version = "0.1.0"
-description = "Boot.dev: Asteroid"
+version = "0.9.0"
+description = "Boot.dev: Asteroids"
 readme = "README.md"
 requires-python = ">=3.13"
 
