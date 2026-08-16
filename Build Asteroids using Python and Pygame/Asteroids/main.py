@@ -8,6 +8,7 @@ from headupdisplay import Hud
 
 from logger import log_event, log_state
 from platform import python_version
+from sys import version
 
 import pygame
 import asyncio
@@ -59,6 +60,7 @@ def welcome_msg():
     print("\nStarting Asteroids with pygame version:", pygame.ver)
     print("Using SDL version:", pygame.SDL)
     print("On Python version", python_version())
+    print("Details:", version)
 
     print("\nScreen width:", SCREEN_WIDTH)
     print("Screen height:", SCREEN_HEIGHT, '\n')
