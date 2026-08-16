@@ -1,15 +1,32 @@
 #:schema none
 
 name = 'Asteroids'
-version = '0.9.0'
+version = '1.0.0'
 author_name = 'GoToLoop'
 license = 'Unlicense'
 description = 'Boot.dev: Asteroids'
 url = 'https://GitHub.com/GoToLoop/Boot.dev'
 
+
+[files]
+"asteroidfield.py" = ''
+"typedgroup.py" = ''
+"traittypes.py" = ''
+"asteroid.py" = ''
+"circleshape.py" = ''
+"typehints.py" = ''
+"constants.py" = ''
+"score.py" = ''
+"logger.py" = ''
+"player.py" = ''
+"shot.py" = ''
+"headupdisplay.py" = ''
+"spritegroups.py" = ''
+
+
 [project]
 name = "Asteroids"
-version = "0.9.0"
+version = "1.0.0"
 description = "Boot.dev: Asteroids"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -17,6 +34,7 @@ requires-python = ">=3.13"
 dependencies = [
     "pygame-ce>=2.5",
 ]
+
 
 [tool.pyright]
 # extends = "../../pyproject.toml"
