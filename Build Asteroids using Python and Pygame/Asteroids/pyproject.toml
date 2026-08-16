@@ -5,7 +5,7 @@ version = '1.0.0'
 author_name = 'GoToLoop'
 license = 'Unlicense'
 description = 'Boot.dev: Asteroids'
-url = 'https://GitHub.com/GoToLoop/Boot.dev'
+url = 'https://GoToLoop.GitHub.io/Boot.dev/'
 
 
 [files]
