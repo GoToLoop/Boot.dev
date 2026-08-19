@@ -1,43 +1,38 @@
 #!/usr/bin/env python3
 
+from dataclasses import dataclass
+from typing import Protocol
+from collections.abc import Iterable
+
+class MediaCard(Protocol):
+    def card_text(self) -> str: ...
+
+
+@dataclass
 class Article:
-    def __init__(self, title, author):
-        self.title = title
-        self.author = author
+    title: str; author: str
 
-    def card_text(self):
-        return self.title + " - " + self.author
+    def card_text(self, _formatter: str="%s: %s by %s"):
+        return _formatter % (type(self).__name__, self.title, self.author)
 
 
+@dataclass
 class Video:
-    def __init__(self, title, minutes):
-        self.title = [title]
-        self.minutes = minutes
+    title: str; minutes: int
 
-    def minutes_text(self):
-        return str(self.minutes) + " min"
+    def card_text(self, _formatter: str="%s: %s (%d min)"):
+        return _formatter % (type(self).__name__, self.title, self.minutes)
 
 
-def build_library_cards(items):
-    cards = []
-    for item in items:
-        if hasattr(item, "author"):
-            cards.append(item.title + " by " + item.author)
-        else:
-            cards.append("Video: " + item.title[0] + " by " + str(item.minutes))
-    return cards
+def build_library_cards(items: Iterable[MediaCard]) -> list[str]:
+    return [ card.card_text() for card in items ]
 
 
+if __name__ == "__main__":
+    items = (
+        Article("Python Tips", "Mia"),
+        Video("Debugging 101", 12),
+    )
 
-# if __name__ == "__main__":
-#     book = LibraryBook("Dune", "Frank Herbert", 2)
-#
-#     print(book.checkout()) # True
-#     print(book.checkout()) # True
-#     print(book.checkout()) # False
-#     print(book.return_copy()) # True
-#
-#     print(book.get_status()) # "Dune" by Frank Herbert (0/2 available)
-#
-#     print(f"{LibraryBook.total_checkouts = }") # LibraryBook.total_checkouts = 2
-#     print(f"{book.total_returns = }") # book.total_returns = 1
+    cards = build_library_cards(items)
+    print(cards)
