@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from typing import Protocol
-from collections.abc import Iterable
+from collections.abc import Iterable, Iterator
 
 class MediaCard(Protocol):
     def card_text(self) -> str: ...
@@ -36,3 +36,8 @@ if __name__ == "__main__":
 
     cards = build_library_cards(items)
     print(cards)
+
+    card: MediaCard = Video("The Matrix", 136)
+    print(card, card.card_text())
+
+    zipped: Iterator[tuple[str]] = zip(cards)
