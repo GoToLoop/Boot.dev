@@ -12,7 +12,7 @@ class MediaCard(Protocol):
 class Article:
     title: str; author: str
 
-    def card_text(self, _formatter: str="%s: %s by %s"):
+    def card_text(self, _formatter: str="%s: %s by %s") -> str:
         return _formatter % (type(self).__name__, self.title, self.author)
 
 
@@ -20,7 +20,7 @@ class Article:
 class Video:
     title: str; minutes: int
 
-    def card_text(self, _formatter: str="%s: %s (%d min)"):
+    def card_text(self, _formatter: str="%s: %s (%d min)") -> str:
         return _formatter % (type(self).__name__, self.title, self.minutes)
 
 
@@ -38,6 +38,7 @@ if __name__ == "__main__":
     print(cards)
 
     card: MediaCard = Video("The Matrix", 136)
-    print(card, card.card_text())
+    print(card, card.card_text(), '\n')
 
     zipped: Iterator[tuple[str]] = zip(cards)
+    print(*zipped, sep='\n')
