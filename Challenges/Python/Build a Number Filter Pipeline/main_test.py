@@ -3,27 +3,27 @@
 from main import combine_predicates, build_pipeline
 
 
-def is_even(n):
+def is_even(n: int):
     return n % 2 == 0
 
 
-def is_positive(n):
+def is_positive(n: int):
     return n > 0
 
 
-def is_negative(n):
+def is_negative(n: int):
     return n < 0
 
 
-def square(n):
+def square(n: int):
     return n * n
 
 
-def increment(n):
+def increment(n: int):
     return n + 1
 
 
-def triple(n):
+def triple(n: int):
     return n * 3
 
 
