@@ -4,15 +4,16 @@ TextFunc = Callable[[str], str]
 
 # Don't touch above this line
 
+def replacer(old: str, new: str) -> Callable[[TextFunc], TextFunc]: # builder
+    def replace(decorated_func: TextFunc) -> TextFunc: # function decorator
+        return lambda text: decorated_func( text.replace(old, new) ) # wrapper
+    return replace
 
-def replacer(old: str, new: str) -> Callable[[TextFunc], TextFunc]:
-    pass
 
-
-# ?
-# ?
-# ?
-# ?
-# ?
+@replacer("&", "&amp;")
+@replacer("<", "&lt;")
+@replacer(">", "&gt;")
+@replacer('"', "&quot;")
+@replacer("'", "&#x27;")
 def tag_pre(text: str) -> str:
     return f"<pre>{text}</pre>"  # Don't change the body of tag_pre
