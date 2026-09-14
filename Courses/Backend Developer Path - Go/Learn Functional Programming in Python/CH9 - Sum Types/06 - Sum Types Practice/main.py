@@ -28,15 +28,21 @@ def get_csv_status(
 
 @overload
 def get_csv_status(
+    status: Literal[CSVExportStatus.PROCESSING],
+    data: PreparedCSVData
+) -> tuple[Literal["Processing..."], str]: ...
+
+@overload
+def get_csv_status(
     status: Literal[CSVExportStatus.SUCCESS],
     data: str
 ) -> tuple[Literal["Success!"], str]: ...
 
-@overload # for PROCESSING & FAILURE status
+@overload
 def get_csv_status(
-    status: CSVExportStatus,
-    data: PreparedCSVData
-) -> tuple[str, str]: ...
+    status: Literal[CSVExportStatus.FAILURE],
+    data: RawCSVData
+) -> tuple[Literal["Unknown error, retrying..."], str]: ...
 
 def get_csv_status(
     status: CSVExportStatus,
