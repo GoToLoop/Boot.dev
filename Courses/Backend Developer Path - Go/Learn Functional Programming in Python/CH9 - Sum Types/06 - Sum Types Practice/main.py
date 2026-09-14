@@ -32,7 +32,7 @@ def get_csv_status(
     data: str
 ) -> tuple[Literal["Success!"], str]: ...
 
-@overload
+@overload # for PROCESSING & FAILURE status
 def get_csv_status(
     status: CSVExportStatus,
     data: PreparedCSVData
