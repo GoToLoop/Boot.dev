@@ -23,36 +23,42 @@ from typing import cast, overload, Literal
 @overload
 def get_csv_status(
     status: Literal[CSVExportStatus.PENDING],
-    csv: RawCSVData
+    data: RawCSVData
 ) -> tuple[Literal["Pending..."], PreparedCSVData]: ...
 
 @overload
 def get_csv_status(
+    status: Literal[CSVExportStatus.SUCCESS],
+    data: str
+) -> tuple[Literal["Success!"], str]: ...
+
+@overload
+def get_csv_status(
     status: CSVExportStatus,
-    csv: PreparedCSVData
+    data: PreparedCSVData
 ) -> tuple[str, str]: ...
 
 def get_csv_status(
     status: CSVExportStatus,
-    csv: RawCSVData | PreparedCSVData
+    data: RawCSVData | PreparedCSVData | str
 ) -> CSVStatusResult:
     match status:
         case CSVExportStatus.PENDING: # returns tuple[str, PreparedCSVData]
-            return "Pending...", [ [*map(str, row)] for row in csv ]
+            return "Pending...", [ [*map(str, row)] for row in data ]
 
         case CSVExportStatus.PROCESSING: # returns tuple[str, str]
-            prepared = cast(PreparedCSVData, csv)
+            prepared = cast(PreparedCSVData, data)
             return "Processing...", '\n'.join(','.join(row) for row in prepared)
 
         case CSVExportStatus.SUCCESS: # returns tuple[str, str]
-            return "Success!", cast(PreparedCSVData, csv)
+            return "Success!", cast(str, data)
 
         case CSVExportStatus.FAILURE: # returns tuple[str, str]
             return "Unknown error, retrying...", get_csv_status(
                 CSVExportStatus.PROCESSING,
                 get_csv_status(
                     CSVExportStatus.PENDING,
-                    cast(RawCSVData, csv)
+                    cast(RawCSVData, data)
                 )[1]
             )[1]
 
