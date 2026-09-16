@@ -5,6 +5,7 @@ version = '1.0.0'
 author_name = 'GoToLoop'
 license = 'Unlicense'
 description = 'Boot.dev: Asteroids'
+readme = "README.md"
 url = 'https://GoToLoop.GitHub.io/Boot.dev/'
 
 
