@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
+from typing import Protocol
+
 from os import environ
+from argparse import ArgumentParser
+
 from dotenv import load_dotenv
 from openai import OpenAI
 
-PROMPT = "Why is Boot.dev such a great place to learn " +\
-         "backend development? Use one paragraph maximum."
+class ChatNamespace(Protocol): user_prompt: str
 
 def main():
     if not (load_dotenv() and (api_key := environ.get("OPENROUTER_API_KEY"))):
@@ -16,17 +19,16 @@ def main():
         api_key=api_key,
     )
 
-    print("User prompt:")
-    print(PROMPT, '\n')
+    parser = ArgumentParser(description="AI Code Assistant Agent")
+    parser.add_argument("user_prompt", type=str, help="AI prompt")
+    args = parser.parse_args(namespace=ChatNamespace)
+
+    print("\nUser prompt:")
+    print(args.user_prompt, '\n')
 
     response = client.chat.completions.create(
         model="openrouter/free",
-        messages=[
-            {
-                "role": "user",
-                "content": PROMPT,
-            }
-        ],
+        messages=({ "role": "user", "content": args.user_prompt },)
     )
 
     if not (usage := response.usage): raise RuntimeError("Failed AI request!")
