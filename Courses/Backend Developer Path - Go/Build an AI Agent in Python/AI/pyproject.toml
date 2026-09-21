@@ -6,7 +6,4 @@ license = 'Unlicense'
 description = 'Boot.dev: AI Agent'
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = [
-    "openai==2.44.0",
-    "python-dotenv==1.1.0",
-]
+dependencies = [ "openai==2.44.0", "python-dotenv==1.1.0" ]

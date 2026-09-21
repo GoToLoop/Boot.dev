@@ -21,7 +21,7 @@ def ask_ai(
     messages: Iterable[ChatCompletionMessageParam],
     model: ChatModel | str = "openrouter/free"
 ) -> ChatCompletion:
-    return client.chat.completions.create(messages=messages, model=model)
+    return client.chat.completions.create( messages=messages, model=model )
 
 
 def log_ai_response(response: ChatCompletion, verbose=True):
@@ -49,7 +49,8 @@ def main():
     parser = ArgumentParser(description="AI Code Assistant Agent")
     parser.add_argument("user_prompt", type=str, help="AI prompt")
     parser.add_argument("--verbose", action="store_true", help="Verbose output")
-    args = parser.parse_args(namespace=ChatNamespace)
+
+    args = parser.parse_args( namespace=ChatNamespace() )
 
     if args.verbose:
         print("\nUser prompt:")
