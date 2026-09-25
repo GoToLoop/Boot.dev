@@ -4,7 +4,7 @@ from sys import argv
 from pkg.calculator import evaluate
 from pkg.render import format_json_output
 
-def main():
+def main() -> None:
     if len(argv) <= 1:
         print("Calculator App")
         print('Usage: python main.py "<expression>"')

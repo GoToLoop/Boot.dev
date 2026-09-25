@@ -45,6 +45,9 @@ def _evaluate_infix(
     if len(vals) != 1: raise ValueError("invalid expression")
     return vals[0]
 
+"""
+def _apply_operator(self, operators: list[str], values: list[float]): ...
+"""
 
 def _apply_operator(operators: list[Operator], values: list[float]):
     if not operators: return
