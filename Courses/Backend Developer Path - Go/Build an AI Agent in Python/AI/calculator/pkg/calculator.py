@@ -1,64 +1,57 @@
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
+from typing import Literal, Optional
 
-class Calculator:
-    def __init__(self) -> None:
-        self.operators: dict[str, Callable[[float, float], float]] = {
-            "+": lambda a, b: a + b,
-            "-": lambda a, b: a - b,
-            "*": lambda a, b: a * b,
-            "/": lambda a, b: a / b,
-        }
-        self.precedence: dict[str, int] = {
-            "+": 1,
-            "-": 1,
-            "*": 2,
-            "/": 2,
-        }
+Operator = Literal['+', '-', '*', '/']
+Calc = Callable[[float, float], float]
 
+OPERATORS: dict[Operator, Calc] = {
+    '+': lambda a, b: a + b,
+    '-': lambda a, b: a - b,
+    '*': lambda a, b: a * b,
+    '/': lambda a, b: a / b
+}
 
-    def evaluate(self, expression: str) -> float | None:
-        if not expression or expression.isspace():
-            return None
-        tokens = expression.strip().split()
-        return self._evaluate_infix(tokens)
+PRECEDENCES: dict[Operator, int] = { '+': 1, '-': 1, '*': 2, '/': 2 }
+
+def evaluate(expression: str, threaded=False) -> Optional[float]:
+    if not expression or expression.isspace(): return None
+    tokens = expression.strip().split()
+
+    return _evaluate_infix(tokens
+        ) if not threaded else _evaluate_infix(tokens, [], [])
 
 
-    def _evaluate_infix(self, tokens: list[str]) -> float:
-        values: list[float] = []
-        operators: list[str] = []
+def _evaluate_infix(
+    tokens: Sequence[str], _ops: list[Operator] = [], _vals: list[float] = []
+) -> float:
+    _ops.clear()
+    _vals.clear()
 
-        for token in tokens:
-            if token in self.operators:
-                while (
-                    operators
-                    and operators[-1] in self.operators
-                    and self.precedence[operators[-1]] >= self.precedence[token]
-                ):
-                    self._apply_operator(operators, values)
-                operators.append(token)
-            else:
-                try:
-                    values.append(float(token))
-                except ValueError:
-                    raise ValueError(f"invalid token: {token}")
+    for token in tokens:
+        if token in OPERATORS:
+            while _ops and PRECEDENCES[_ops[-1]] >= PRECEDENCES[token]:
+                _apply_operator(_ops, _vals)
+            _ops.append(token)
+        else:
+            try: _vals.append(float(token))
+            except ValueError: raise ValueError("invalid token: " + token)
 
-        while operators:
-            self._apply_operator(operators, values)
+    while _ops: _apply_operator(_ops, _vals)
 
-        if len(values) != 1:
-            raise ValueError("invalid expression")
-
-        return values[0]
+    if len(_vals) != 1: raise ValueError("invalid expression")
+    return _vals[0]
 
 
-    def _apply_operator(self, operators: list[str], values: list[float]):
-        if not operators:
-            return
+def _apply_operator(operators: list[Operator], values: list[float]):
+    if not operators: return
+    operator = operators.pop()
 
-        operator = operators.pop()
-        if len(values) < 2:
-            raise ValueError(f"not enough operands for operator {operator}")
+    if len(values) < 2:
+        raise ValueError("not enough operands for operator " + operator)
 
-        b = values.pop()
-        a = values.pop()
-        values.append(self.operators[operator](a, b))
+    b = values.pop()
+    a = values.pop()
+    values.append( OPERATORS[operator](a, b) )
+
+
+__all__ = "evaluate", "Operator", "Calc", "OPERATORS", "PRECEDENCES"

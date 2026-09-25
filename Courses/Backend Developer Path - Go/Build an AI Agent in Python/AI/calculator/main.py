@@ -1,27 +1,22 @@
 #!/usr/bin/env python3
 
-import sys
-from pkg.calculator import Calculator
+from sys import argv
+from pkg.calculator import evaluate
 from pkg.render import format_json_output
 
 def main():
-    calculator = Calculator()
-    if len(sys.argv) <= 1:
+    if len(argv) <= 1:
         print("Calculator App")
         print('Usage: python main.py "<expression>"')
         print('Example: python main.py "3 + 5"')
-        return
+        exit(1)
 
-    expression = " ".join(sys.argv[1:])
     try:
-        result = calculator.evaluate(expression)
-        if result is not None:
-            to_print = format_json_output(expression, result)
-            print(to_print)
-        else:
-            print("Error: Expression is empty or contains only whitespace.")
-    except Exception as e:
-        print(f"Error: {e}")
+        if ( result := evaluate(expression := ' '.join(argv[1:])) ) is not None:
+            print(format_json_output(expression, result))
+        else: print("Error: Expression is empty or contains only whitespace.")
+
+    except ValueError as e: print("Error:", e); exit(1)
 
 
 if __name__ == "__main__": main()
