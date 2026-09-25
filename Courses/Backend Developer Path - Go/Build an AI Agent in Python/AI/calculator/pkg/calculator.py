@@ -22,10 +22,10 @@ def evaluate(
 
 
 def evaluate_threaded(
-    expression: str, ops: list[Operator], vals: list[float]
+    expression: str, operations: list[Operator], values: list[float]
 ) -> Optional[float]:
     if not expression or expression.isspace(): return None
-    return _evaluate_infix(expression.strip().split(), ops, vals)
+    return _evaluate_infix(expression.strip().split(), operations, values)
 
 
 def _evaluate_infix(
