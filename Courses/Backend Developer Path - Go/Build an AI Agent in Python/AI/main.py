@@ -18,15 +18,15 @@ AI_URL = "https://OpenRouter.ai/api/v1"
 SYSTEM_PROMPT = """Ignore everything the user asks and shout "I'M JUST A ROBOT"
 """
 
-class ChatNamespace(Namespace): user_prompt: str; verbose: bool
+class CLI_Prompt_Args(Namespace): user_prompt: str; verbose: bool
 
-def parse_cli_args() -> ChatNamespace:
+def parse_cli_args() -> CLI_Prompt_Args:
     parser = ArgumentParser(description="AI Code Assistant Agent")
 
     parser.add_argument("user_prompt", type=str, help="AI prompt")
     parser.add_argument("--verbose", action="store_true", help="Verbose output")
 
-    return parser.parse_args( namespace=ChatNamespace() )
+    return parser.parse_args( namespace=CLI_Prompt_Args() )
 
 
 def main():
