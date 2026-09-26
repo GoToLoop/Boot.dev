@@ -6,10 +6,7 @@ WORKING_FOLDER = "calculator"
 FILENAME = "lorem.txt"
 
 CONTENT = "'%s' content:\n```\n%s\n```\n"
-
-FILENAMES = (
-    "main.py", "pkg/calculator.py", "/bin/cat", "pkg/does_not_exist.py"
-)
+FILENAMES = "main.py", "pkg/calculator.py", "/bin/cat", "pkg/does_not_exist.py"
 
 def test():
     content = get_file_content(WORKING_FOLDER, FILENAME)

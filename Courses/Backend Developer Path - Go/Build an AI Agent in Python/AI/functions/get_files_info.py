@@ -14,7 +14,7 @@ def get_files_info(working_directory: str, relative_dir: str = '.') -> str:
             + '" as it is outside the permitted working directory'
 
     try: return _get_dir_files_description(target_dir)
-    except Exception as e: return f"Error: Scanning files...\n{e}"
+    except OSError as e: return f"Error: Scanning files...\n{e}"
 
 
 def _get_dir_files_description(folder: PathLike[str] | str) -> str:
