@@ -3,7 +3,7 @@
 from functions.run_python_file import run_python_file
 
 WORK_DIR = "calculator"
-FEEDBACK = "'%s' feedback:\n%s\n"
+OUTPUT = "%s output:\n%s\n"
 
 PYTHON_CALLS = (
     ("main.py",),
@@ -16,7 +16,7 @@ PYTHON_CALLS = (
 
 def test():
     print(*(
-        FEEDBACK % (call[0], run_python_file(WORK_DIR, call[0], *call[1:]))
+        OUTPUT % (call, run_python_file(WORK_DIR, call[0], *call[1:]))
         for call in PYTHON_CALLS
     ), sep='\n')
 
