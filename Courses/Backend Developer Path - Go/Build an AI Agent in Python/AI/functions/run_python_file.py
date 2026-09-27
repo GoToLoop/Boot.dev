@@ -1,6 +1,10 @@
 from os.path import abspath, commonpath, normpath, join, isdir, isfile
 from subprocess import run, CompletedProcess, TimeoutExpired
+
 from collections.abc import Sequence
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING: from openai.types.chat import ChatCompletionFunctionToolParam
 
 PYTHON = "python3" # executable
 TIMEOUT = 30 # seconds
@@ -58,3 +62,39 @@ def _build_python_process_report(process: CompletedProcess[str]) -> str:
         if stderr: reports.append("STDERR:\n" + stderr)
 
     return '\n'.join(reports)
+
+
+schema_run_python_file: "ChatCompletionFunctionToolParam" = {
+    "type": "function",
+    "function": {
+        "name": "run_python_file",
+        "description": (
+            "Executes a specified Python (.py) file relative to the working "
+            "directory with optional command-line arguments. Enforces a "
+            f"{TIMEOUT}-second timeout."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string",
+                    "description": (
+                        "The relative path to the Python file (.py) to execute,"
+                        " starting from the working directory."
+                    ),
+                },
+                "args": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": (
+                        "Optional list of command-line arguments to pass "
+                        "to the Python script."
+                    ),
+                },
+            },
+            "required": ["file_path"],
+        },
+    },
+}

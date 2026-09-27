@@ -1,4 +1,7 @@
 from os.path import abspath, commonpath, normpath, join, isdir, isfile
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING: from openai.types.chat import ChatCompletionFunctionToolParam
 
 MAX_CHARS = 10_000
 TRUNCATED = f'[...File "%s" truncated at {MAX_CHARS} characters]'
@@ -25,3 +28,29 @@ def _read_file_content(absolute_file_path: str, relative_file_path='') -> str:
                 relative_file_path or absolute_file_path
             )
     return content
+
+
+schema_get_file_content: "ChatCompletionFunctionToolParam" = {
+    "type": "function",
+    "function": {
+        "name": "get_file_content",
+        "description": (
+            "Reads and returns the content of a specified file relative to the "
+            "working directory. Automatically truncates files larger than "
+            f"{MAX_CHARS:,} characters."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "rel_file_path": {
+                    "type": "string",
+                    "description": (
+                        "The relative path to the file you want to read, "
+                        "starting from the working directory."
+                    ),
+                },
+            },
+            "required": ["rel_file_path"],
+        },
+    },
+}

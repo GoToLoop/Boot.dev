@@ -1,5 +1,8 @@
 from os import makedirs
 from os.path import abspath, commonpath, normpath, join, isdir, dirname
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING: from openai.types.chat import ChatCompletionFunctionToolParam
 
 def write_file(working_directory: str, rel_file_path: str, content: str) -> str:
     if not isdir(wd := abspath(working_directory)):
@@ -23,3 +26,33 @@ def write_file(working_directory: str, rel_file_path: str, content: str) -> str:
 
 def _write_file_content(absolute_file_path: str, content: str) -> int:
     with open(absolute_file_path, 'w') as f: return f.write(content)
+
+
+schema_write_file: "ChatCompletionFunctionToolParam" = {
+    "type": "function",
+    "function": {
+        "name": "write_file",
+        "description": (
+            "Writes or overwrites text content to a specified file relative to "
+            "the working directory. Automatically creates any missing parent "
+            "directories."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "rel_file_path": {
+                    "type": "string",
+                    "description": (
+                        "The relative path to the file you want to write to, "
+                        "starting from the working directory."
+                    ),
+                },
+                "content": {
+                    "type": "string",
+                    "description": "The text content to write into the file.",
+                },
+            },
+            "required": ["rel_file_path", "content"],
+        },
+    },
+}

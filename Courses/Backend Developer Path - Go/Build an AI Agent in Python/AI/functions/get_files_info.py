@@ -1,16 +1,19 @@
 from os import PathLike, path, scandir
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING: from openai.types.chat import ChatCompletionFunctionToolParam
 
 DESCRIPTION = "- %s: file_size=%d bytes, is_dir=%s"
 
-def get_files_info(working_directory: str, relative_dir: str = '.') -> str:
+def get_files_info(working_directory: str, directory: str = '.') -> str:
     if not path.isdir(wd := path.abspath(working_directory)):
         return 'Error: "' + working_directory + '" is not a directory'
 
-    if not path.isdir(target_dir := path.normpath(path.join(wd, relative_dir))):
-        return 'Error: "' + relative_dir + '" is not a directory'
+    if not path.isdir(target_dir := path.normpath(path.join(wd, directory))):
+        return 'Error: "' + directory + '" is not a directory'
 
     if not target_dir.startswith(wd) or path.commonpath((wd, target_dir)) != wd:
-        return 'Error: Cannot list "' + relative_dir\
+        return 'Error: Cannot list "' + directory\
             + '" as it is outside the permitted working directory'
 
     try: return _get_dir_files_description(target_dir)
@@ -22,3 +25,28 @@ def _get_dir_files_description(folder: PathLike[str] | str) -> str:
         DESCRIPTION % (entry.name, entry.stat().st_size, entry.is_dir())
         for entry in entries
     )
+
+
+schema_get_files_info: "ChatCompletionFunctionToolParam" = {
+    "type": "function",
+    "function": {
+        "name": "get_files_info",
+        "description": (
+            "Lists files and folders in a specified directory relative to the "
+            "working directory, providing file size and whether it's a folder."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "directory": {
+                    "type": "string",
+                    "description": (
+                        "Directory path to list files from, relative to the "
+                        "working directory (defaults to itself '.')."
+                    ),
+                    "default": "."
+                },
+            },
+        },
+    },
+}

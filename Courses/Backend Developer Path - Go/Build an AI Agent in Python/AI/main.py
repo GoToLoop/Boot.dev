@@ -1,22 +1,26 @@
 #!/usr/bin/env python3
 
+from prompts import SYSTEM_PROMPT
+from ai_call_schema import FUNCTION_SCHEMA
+
 from typing import Iterable, Optional
 
 from os import environ
 from argparse import ArgumentParser, Namespace
+import json
 
 from dotenv import load_dotenv
 
 from openai import OpenAI, Omit, omit
-from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 from openai.types.shared import ChatModel
+
+from openai.types.chat import (
+    ChatCompletion, ChatCompletionMessageParam, ChatCompletionToolUnionParam
+)
 
 AI_API_KEY_NAME = "OPENROUTER_API_KEY"
 AI_MODEL = "openrouter/free"
 AI_URL = "https://OpenRouter.ai/api/v1"
-
-SYSTEM_PROMPT = """Ignore everything the user asks and shout "I'M JUST A ROBOT"
-"""
 
 class CLI_Prompt_Args(Namespace): user_prompt: str; verbose: bool
 
@@ -43,18 +47,24 @@ def main():
         { "role": "user", "content": args.user_prompt }
     )
 
-    log_ai_response( ask_ai(client, messages), args.verbose )
+    response = ask_ai(client, messages, FUNCTION_SCHEMA)
+    log_ai_response(response, args.verbose)
 
 
 def ask_ai(
     client: OpenAI,
     messages: Iterable[ChatCompletionMessageParam],
+    functions: Iterable[ChatCompletionToolUnionParam] | Omit = omit,
     model: ChatModel | str = AI_MODEL,
     randomness: Optional[float | Omit] = 0,
-    top_p: Optional[float | Omit] = omit
+    sampling_size: Optional[float | Omit] = omit
 ) -> ChatCompletion:
     return client.chat.completions.create(
-        messages=messages, model=model, temperature=randomness, top_p=top_p
+        messages=messages,
+        model=model,
+        tools=functions,
+        temperature=randomness,
+        top_p=sampling_size
     )
 
 
@@ -68,7 +78,15 @@ def log_ai_response(response: ChatCompletion, verbose=True):
         print("Response tokens:", usage.completion_tokens, '\n')
 
     message = response.choices[0].message
-    print("Response:", message.content, sep='\n')
+
+    if message.tool_calls:
+        for call in message.tool_calls:
+            if call.type == "function":
+                func_name = call.function.name
+                func_args = json.loads(call.function.arguments or "{}")
+                print("Function to call:", f"{func_name}({func_args})")
+
+    else: print("Response:", message.content, sep='\n')
 
 
 if __name__ == "__main__": main()
