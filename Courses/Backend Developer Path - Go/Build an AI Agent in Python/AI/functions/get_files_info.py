@@ -40,13 +40,13 @@ schema_get_files_info: "ChatCompletionFunctionToolParam" = {
             "properties": {
                 "directory": {
                     "type": "string",
+                    "default": ".",
                     "description": (
                         "Directory path to list files from, relative to the "
                         "working directory (defaults to itself '.')."
-                    ),
-                    "default": "."
-                },
-            },
-        },
-    },
+                    )
+                }
+            }
+        }
+    }
 }

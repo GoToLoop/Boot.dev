@@ -41,16 +41,16 @@ schema_get_file_content: "ChatCompletionFunctionToolParam" = {
         ),
         "parameters": {
             "type": "object",
+            "required": ["rel_file_path"],
             "properties": {
                 "rel_file_path": {
                     "type": "string",
                     "description": (
                         "The relative path to the file you want to read, "
                         "starting from the working directory."
-                    ),
-                },
-            },
-            "required": ["rel_file_path"],
-        },
-    },
+                    )
+                }
+            }
+        }
+    }
 }

@@ -33,26 +33,26 @@ schema_write_file: "ChatCompletionFunctionToolParam" = {
     "function": {
         "name": "write_file",
         "description": (
-            "Writes or overwrites text content to a specified file relative to "
-            "the working directory. Automatically creates any missing parent "
-            "directories."
+            "Creates if missing, then writes text content within the working "
+            "directory (overwriting if the file exists). Automatically creates "
+            "any missing parent directories too."
         ),
         "parameters": {
             "type": "object",
+            "required": ["rel_file_path", "content"],
             "properties": {
                 "rel_file_path": {
                     "type": "string",
                     "description": (
                         "The relative path to the file you want to write to, "
                         "starting from the working directory."
-                    ),
+                    )
                 },
                 "content": {
                     "type": "string",
-                    "description": "The text content to write into the file.",
-                },
-            },
-            "required": ["rel_file_path", "content"],
-        },
-    },
+                    "description": "The text content to write into the file."
+                }
+            }
+        }
+    }
 }

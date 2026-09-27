@@ -69,32 +69,31 @@ schema_run_python_file: "ChatCompletionFunctionToolParam" = {
     "function": {
         "name": "run_python_file",
         "description": (
-            "Executes a specified Python (.py) file relative to the working "
-            "directory with optional command-line arguments. Enforces a "
-            f"{TIMEOUT}-second timeout."
+            "Executes a specified Python (.py) file within the working "
+            "directory with optional command-line arguments and returns its "
+            "output. Enforces a " f"{TIMEOUT}-second timeout."
         ),
         "parameters": {
             "type": "object",
+            "required": ["file_path"],
             "properties": {
                 "file_path": {
                     "type": "string",
                     "description": (
                         "The relative path to the Python file (.py) to execute,"
-                        " starting from the working directory."
-                    ),
+                        " starting from the `working_directory`."
+                    )
                 },
                 "args": {
                     "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
+                    "items": { "type": "string" },
+                    "minItems": 0,
                     "description": (
-                        "Optional list of command-line arguments to pass "
-                        "to the Python script."
-                    ),
-                },
-            },
-            "required": ["file_path"],
-        },
-    },
+                        "Command-line variadic arguments tuple to pass to the"
+                        "Python script `file_path`."
+                    )
+                }
+            }
+        }
+    }
 }
