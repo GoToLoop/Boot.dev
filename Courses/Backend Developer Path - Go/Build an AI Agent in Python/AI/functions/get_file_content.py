@@ -18,11 +18,10 @@ def get_file_content(working_directory: str, rel_file_path: str) -> str:
     except OSError as e: return f'Error: Reading file "{rel_file_path}"...\n{e}'
 
 
-def _read_file_content(absolute_file_path: str, relative_file_path=''):
+def _read_file_content(absolute_file_path: str, relative_file_path='') -> str:
     with open(absolute_file_path) as f:
         if len(content := f.read(MAX_CHARS + 1)) > MAX_CHARS: 
             content = content[:MAX_CHARS] + TRUNCATED % (
                 relative_file_path or absolute_file_path
             )
-
     return content

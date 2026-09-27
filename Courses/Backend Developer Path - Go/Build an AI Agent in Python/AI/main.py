@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
-from typing import Iterable
+from typing import Iterable, Optional
 
 from os import environ
 from argparse import ArgumentParser, Namespace
 
 from dotenv import load_dotenv
 
-from openai import OpenAI
+from openai import OpenAI, Omit, omit
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 from openai.types.shared import ChatModel
 
@@ -38,8 +38,9 @@ def main():
 
     client = OpenAI( base_url=AI_URL, api_key=api_key )
 
-    messages: tuple[ChatCompletionMessageParam] = (
-        { "role": "user", "content": args.user_prompt },
+    messages: tuple[ChatCompletionMessageParam, ...] = (
+        { "role": "system", "content": SYSTEM_PROMPT },
+        { "role": "user", "content": args.user_prompt }
     )
 
     log_ai_response( ask_ai(client, messages), args.verbose )
@@ -48,9 +49,13 @@ def main():
 def ask_ai(
     client: OpenAI,
     messages: Iterable[ChatCompletionMessageParam],
-    model: ChatModel | str = AI_MODEL
+    model: ChatModel | str = AI_MODEL,
+    randomness: Optional[float | Omit] = 0,
+    top_p: Optional[float | Omit] = omit
 ) -> ChatCompletion:
-    return client.chat.completions.create( messages=messages, model=model )
+    return client.chat.completions.create(
+        messages=messages, model=model, temperature=randomness, top_p=top_p
+    )
 
 
 def log_ai_response(response: ChatCompletion, verbose=True):
