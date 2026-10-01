@@ -93,9 +93,9 @@ schema_run_python_file: "ChatCompletionFunctionToolParam" = {
                     "items": { "type": "string" },
                     "minItems": 0,
                     "description": (
-                        "A sequence container representing the command-line's "
-                        "variadic arguments to be passed to the Python script "
-                        "`file_path`."
+                        "A sequence container representing any optional "
+                        "command-line's variadic arguments to be passed to the "
+                        "Python script `file_path`."
                     )
                 }
             }

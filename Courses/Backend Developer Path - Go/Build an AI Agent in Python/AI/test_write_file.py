@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 from functions.write_file import write_file
+from functions.calculator import WORK_DIR
 
-WORKING_FOLDER = "calculator"
 FEEDBACK = "'%s' feedback:\n%s\n"
 
 FILE_CONTENTS = (
@@ -13,7 +13,7 @@ FILE_CONTENTS = (
 
 def test():
     print(*(
-        FEEDBACK % (filename, write_file(WORKING_FOLDER, filename, content))
+        FEEDBACK % (filename, write_file(WORK_DIR, filename, content))
         for filename, content in FILE_CONTENTS
     ), sep='\n')
 

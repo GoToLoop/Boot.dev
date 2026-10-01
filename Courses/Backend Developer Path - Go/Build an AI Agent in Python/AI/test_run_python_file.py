@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 from functions.run_python_file import run_python_file
+from functions.calculator import WORK_DIR
 
-WORK_DIR = "calculator"
 OUTPUT = "%s output:\n%s\n"
 
 PYTHON_CALLS = (

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from prompts import SYSTEM_PROMPT
-from ai_call_schema import FUNC_SCHEMA, FUNC_MAP, WORK_SUBDIR, is_partial_func
+from ai_call_schema import FUNC_SCHEMA, FUNC_MAP, WORK_DIR, is_partial_func
 
 from typing import NamedTuple, Iterable, Sequence, Optional, TypeIs
 
@@ -156,7 +156,7 @@ def call_function(
         args = call.named_args
 
         result = func(**args) if is_partial_func(
-            func) else func(WORK_SUBDIR, **args)
+            func) else func(WORK_DIR, **args)
 
         if not result:
             raise RuntimeError("No content returned by function " + name)

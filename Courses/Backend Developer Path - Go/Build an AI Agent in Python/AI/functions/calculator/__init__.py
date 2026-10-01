@@ -6,12 +6,12 @@ from ..get_file_content import get_file_content, schema_get_file_content
 from ..write_file import write_file, schema_write_file
 from ..run_python_file import run_python_file, schema_run_python_file
 
-WORK_SUBDIR = "calculator"
+WORK_DIR = "calculator"
 
-get_files_info = partial(get_files_info, WORK_SUBDIR)
-get_file_content = partial(get_file_content, WORK_SUBDIR)
-write_file = partial(write_file, WORK_SUBDIR)
-run_python_file = partial(run_python_file, WORK_SUBDIR)
+get_files_info = partial(get_files_info, WORK_DIR)
+get_file_content = partial(get_file_content, WORK_DIR)
+write_file = partial(write_file, WORK_DIR)
+run_python_file = partial(run_python_file, WORK_DIR)
 
 def is_partial_func[R](func: Callable[..., R]) -> TypeIs[partial[R]]:
     return isinstance(func, partial)
@@ -22,5 +22,5 @@ __all__ = (
     "get_file_content", "schema_get_file_content",
     "write_file", "schema_write_file",
     "run_python_file", "schema_run_python_file",
-    'is_partial_func', 'WORK_SUBDIR'
+    'is_partial_func', 'WORK_DIR'
 )
