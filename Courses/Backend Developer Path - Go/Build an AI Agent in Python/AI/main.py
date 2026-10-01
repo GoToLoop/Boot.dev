@@ -85,26 +85,27 @@ def ask_ai(
 def log_ai_response(
     response: ChatCompletion,
     verbose=True
-) -> Optional[list[ChatCompletionToolMessageParam]]:
+) -> list[ChatCompletionMessage | ChatCompletionToolMessageParam]:
     print("Model used:", response.model, '\n')
 
     message, usage = get_message_and_usage_from_ai_response(response)
+    replies: list[ChatCompletionMessage | ChatCompletionToolMessageParam] = []
  
     if verbose:
         print("Prompt tokens:", usage.prompt_tokens)
         print("Response tokens:", usage.completion_tokens, '\n')
 
     if not message.tool_calls:
-        return print("Response:", message.content, sep='\n')
+        print("Response:", message.content, sep='\n')
+        replies.append(message)
 
-    replies: list[ChatCompletionToolMessageParam] = []
+    else:
+        for call in get_func_args_from_tool_calls(message.tool_calls):
+            print(" - Calling function: " + call.func_name, end='')
+            print(verbose and f"({call.named_args})" or "")
 
-    for call in get_func_args_from_tool_calls(message.tool_calls):
-        print(" - Calling function: " + call.func_name, end='')
-        print(verbose and f"({call.named_args})" or "")
-
-        replies.append(reply := call_function(call))
-        if verbose: print(f"\n-> {reply['content']}")
+            replies.append(reply := call_function(call))
+            if verbose: print(f"\n-> {reply['content']}")
 
     return replies
 
