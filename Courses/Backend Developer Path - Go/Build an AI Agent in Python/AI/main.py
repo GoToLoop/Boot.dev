@@ -136,11 +136,10 @@ def is_func_tool(
 def mapped_func_args(
     func_call: ChatCompletionMessageFunctionToolCall
 ) -> FuncNamedArgs:
-    func = func_call.function
     return FuncNamedArgs(
         func_call.id,
-        func.name,
-        json.loads(func.arguments or "{}")
+        func_call.function.name,
+        json.loads(func_call.function.arguments or "{}")
     )
 
 
