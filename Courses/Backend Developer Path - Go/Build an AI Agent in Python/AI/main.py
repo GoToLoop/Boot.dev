@@ -144,10 +144,7 @@ def mapped_func_args(
     )
 
 
-def call_function(
-    call: FuncNamedArgs, verbose=True
-) -> ChatCompletionToolMessageParam:
-
+def call_function(call: FuncNamedArgs) -> ChatCompletionToolMessageParam:
     if (name := call.func_name) not in FUNC_MAP:
         result = "Error: Unknown function: " + name
 
