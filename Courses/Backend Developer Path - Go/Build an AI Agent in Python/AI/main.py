@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 from prompts import SYSTEM_PROMPT
-from ai_call_schema import FUNCTION_SCHEMA
+from ai_call_schema import FUNC_SCHEMA, FUNC_MAP, WORK_SUBDIR, is_partial_func
 
-from typing import Iterable, Sequence, Optional, TypeIs
+from typing import NamedTuple, Iterable, Sequence, Optional, TypeIs
 
 from os import environ
 from argparse import ArgumentParser, Namespace
@@ -16,7 +16,7 @@ from openai.types import CompletionUsage
 from openai.types.shared import ChatModel
 
 from openai.types.chat import (
-    ChatCompletion, ChatCompletionMessage,
+    ChatCompletion, ChatCompletionMessage, ChatCompletionToolMessageParam,
     ChatCompletionMessageParam, ChatCompletionToolUnionParam,
     ChatCompletionMessageToolCallUnion, ChatCompletionMessageFunctionToolCall
 )
@@ -25,18 +25,26 @@ AI_API_KEY_NAME = "OPENROUTER_API_KEY"
 AI_MODEL = "openrouter/free"
 AI_URL = "https://OpenRouter.ai/api/v1"
 
-FUNC_ARGS = dict[str, Sequence[str] | str]
-FUNC_NAMED_ARGS = tuple[str, str, FUNC_ARGS]
+NamedArgs = dict[str, Sequence[str] | str]
 
-class CLI_Prompt_Args(Namespace): user_prompt: str; verbose: bool
+class FuncNamedArgs(NamedTuple):
+    call_id: str
+    func_name: str
+    named_args: NamedArgs
 
-def parse_cli_args() -> CLI_Prompt_Args:
+
+class Cli_Prompt_Args(Namespace):
+    user_prompt: str
+    verbose: bool
+
+
+def parse_cli_args() -> Cli_Prompt_Args:
     parser = ArgumentParser(description="AI Code Assistant Agent")
 
     parser.add_argument("user_prompt", type=str, help="AI prompt")
     parser.add_argument("--verbose", action="store_true", help="Verbose output")
 
-    return parser.parse_args( namespace=CLI_Prompt_Args() )
+    return parser.parse_args( namespace=Cli_Prompt_Args() )
 
 
 def main():
@@ -53,8 +61,8 @@ def main():
         { "role": "user", "content": args.user_prompt }
     )
 
-    response = ask_ai(client, messages, FUNCTION_SCHEMA)
-    functions = log_ai_response(response, args.verbose)
+    response = ask_ai(client, messages, FUNC_SCHEMA)
+    log_ai_response(response, args.verbose)
 
 
 def ask_ai(
@@ -74,36 +82,10 @@ def ask_ai(
     )
 
 
-def get_message_and_usage_from_ai_response(
-    response: ChatCompletion
-) -> tuple[ChatCompletionMessage, CompletionUsage]:
-    if not (usage := response.usage): raise RuntimeError("Failed AI request!")
-    return response.choices[0].message, usage
-
-
-def collect_function_args_from_tool_calls(
-    tool_calls: Iterable[ChatCompletionMessageToolCallUnion]
-) -> tuple[FUNC_NAMED_ARGS, ...]:
-    return tuple( map(mapped_func_args, filter(is_func_predicate, tool_calls)) )
-
-
-def is_func_predicate(
-    tool_call: ChatCompletionMessageToolCallUnion
-) -> TypeIs[ChatCompletionMessageFunctionToolCall]:
-    return tool_call.type == "function"
-
-
-def mapped_func_args(
-    func_call: ChatCompletionMessageFunctionToolCall
-) -> FUNC_NAMED_ARGS:
-    func = func_call.function
-    return func_call.id, func.name, json.loads(func.arguments or "{}")
-
-
 def log_ai_response(
     response: ChatCompletion,
     verbose=True
-) -> Optional[tuple[FUNC_NAMED_ARGS, ...]]:
+) -> Optional[list[ChatCompletionToolMessageParam]]:
     print("Model used:", response.model, '\n')
 
     message, usage = get_message_and_usage_from_ai_response(response)
@@ -112,18 +94,74 @@ def log_ai_response(
         print("Prompt tokens:", usage.prompt_tokens)
         print("Response tokens:", usage.completion_tokens, '\n')
 
-    if message.tool_calls:
-        calls = collect_function_args_from_tool_calls(message.tool_calls)
+    if not message.tool_calls:
+        return print("Response:", message.content, sep='\n')
 
-        for _id, func_name, func_args in calls:
-            print("Function to call:", f"{func_name}({func_args})")
+    replies: list[ChatCompletionToolMessageParam] = []
 
-        return calls
+    for call in get_func_args_from_tool_calls(message.tool_calls):
+        print(" - Calling function: " + call.func_name, end='')
+        print(verbose and f"({call.named_args})" or "")
 
-    print("Response:", message.content, sep='\n')
+        replies.append(reply := call_function(call))
+        if verbose: print(f"\n-> {reply['content']}")
+
+    return replies
 
 
-# def call_function(call: FUNC_NAMED_ARGS, verbose=True) -> dict: pass
+def get_message_and_usage_from_ai_response(
+    response: ChatCompletion
+) -> tuple[ChatCompletionMessage, CompletionUsage]:
+    if not response.usage: raise RuntimeError("Failed AI request!")
+    return response.choices[0].message, response.usage
+
+
+def get_func_args_from_tool_calls(
+    tool_calls: Iterable[ChatCompletionMessageToolCallUnion]
+) -> tuple[FuncNamedArgs, ...]:
+    # return tuple(map(mapped_func_args, filter(is_func_predicate, tool_calls)))
+
+    return tuple(
+        mapped_func_args(tool_call)
+        for tool_call in tool_calls
+        if is_func_tool(tool_call)
+    )
+
+
+def is_func_tool(
+    tool_call: ChatCompletionMessageToolCallUnion
+) -> TypeIs[ChatCompletionMessageFunctionToolCall]:
+    return tool_call.type == "function"
+
+
+def mapped_func_args(
+    func_call: ChatCompletionMessageFunctionToolCall
+) -> FuncNamedArgs:
+    func = func_call.function
+    return FuncNamedArgs(
+        func_call.id,
+        func.name,
+        json.loads(func.arguments or "{}")
+    )
+
+
+def call_function(
+    call: FuncNamedArgs, verbose=True
+) -> ChatCompletionToolMessageParam:
+
+    if (name := call.func_name) not in FUNC_MAP:
+        result = "Error: Unknown function: " + name
+
+    else:
+        func = FUNC_MAP[name]
+        args = call.named_args
+
+        result = func(**args) if is_partial_func(
+            func) else func(WORK_SUBDIR, **args)
+
+        if not result: raise Exception("No content returned by function" + name)
+
+    return { "role": "tool", "tool_call_id": call.call_id, "content": result }
 
 
 if __name__ == "__main__": main()

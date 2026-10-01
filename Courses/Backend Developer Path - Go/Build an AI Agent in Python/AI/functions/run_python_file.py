@@ -2,14 +2,16 @@ from os.path import abspath, commonpath, normpath, join, isdir, isfile
 from subprocess import run, CompletedProcess, TimeoutExpired
 
 from collections.abc import Sequence
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING: from openai.types.chat import ChatCompletionFunctionToolParam
 
 PYTHON = "python3" # executable
 TIMEOUT = 30 # seconds
 
-def run_python_file(working_directory: str, file_path: str, *args: str) -> str:
+def run_python_file(
+    working_directory: str, file_path: str, args: Optional[Sequence[str]] = None
+) -> str:
     if not isdir(wd := abspath(working_directory)):
         return 'Error: "' + working_directory + '" is not a directory'
 
@@ -23,6 +25,7 @@ def run_python_file(working_directory: str, file_path: str, *args: str) -> str:
         return 'Error: Cannot execute "' + file_path\
             + '" as it is outside the permitted working directory'
 
+    args = args or ()
     command = PYTHON, target_file, *args
     try: process = _call_python_script(command, wd)
 

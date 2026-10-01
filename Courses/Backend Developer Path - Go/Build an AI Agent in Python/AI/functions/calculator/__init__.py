@@ -13,7 +13,7 @@ get_file_content = partial(get_file_content, WORK_SUBDIR)
 write_file = partial(write_file, WORK_SUBDIR)
 run_python_file = partial(run_python_file, WORK_SUBDIR)
 
-def is_partial_predicate[R](func: Callable[..., R]) -> TypeIs[partial[R]]:
+def is_partial_func[R](func: Callable[..., R]) -> TypeIs[partial[R]]:
     return isinstance(func, partial)
 
 
@@ -22,5 +22,5 @@ __all__ = (
     "get_file_content", "schema_get_file_content",
     "write_file", "schema_write_file",
     "run_python_file", "schema_run_python_file",
-    'is_partial_predicate'
+    'is_partial_func', 'WORK_SUBDIR'
 )
