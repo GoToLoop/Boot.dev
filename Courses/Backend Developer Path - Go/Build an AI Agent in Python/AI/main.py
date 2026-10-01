@@ -96,18 +96,18 @@ def log_ai_response(
 
     if not message.tool_calls:
         print("Response:", message.content, sep='\n')
-        return message
+        return message # final AI response
 
-    replies: list[ChatCompletionToolMessageParam] = []
+    call_results: list[ChatCompletionToolMessageParam] = []
 
     for call in get_func_args_from_tool_calls(message.tool_calls):
         print(" - Calling function: " + call.func_name, end='')
         print(verbose and f"({call.named_args})" or "")
 
-        replies.append(reply := call_function(call))
-        if verbose: print(f"\n-> {reply['content']}")
+        call_results.append(result := call_function(call))
+        if verbose: print(f"\n-> {result['content']}")
 
-    return replies
+    return call_results
 
 
 def get_message_and_usage_from_ai_response(
