@@ -32,8 +32,8 @@ schema_get_files_info: "ChatCompletionFunctionToolParam" = {
     "function": {
         "name": "get_files_info",
         "description": (
-            "Lists files and folders in a specified directory relative to the "
-            "working directory, providing file size and whether it's a folder."
+            "Lists files and folders within the working directory as 1 joined"
+            "string, providing file size and whether it's a folder or not."
         ),
         "parameters": {
             "type": "object",

@@ -8,13 +8,13 @@ FUNC_SCHEMA = (
     schema_run_python_file
 )
 
+FUNC_MAP: dict[str, Callable[..., str]] = {
+    (name := func["function"]["name"]): globals()[name]
+    for func in FUNC_SCHEMA
+}
+
 FUNC_NAMES = (
     "get_files_info", "get_file_content", "write_file", "run_python_file"
 )
 
 FUNCTIONS = get_files_info, get_file_content, write_file, run_python_file
-
-FUNC_MAP: dict[str, Callable[..., str]] = {
-    (name := func["function"]["name"]): globals()[name]
-    for func in FUNC_SCHEMA
-}

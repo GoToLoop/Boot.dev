@@ -123,8 +123,7 @@ def get_func_args_from_tool_calls(
 
     return tuple(
         mapped_func_args(tool_call)
-        for tool_call in tool_calls
-        if is_func_tool(tool_call)
+        for tool_call in tool_calls if is_func_tool(tool_call)
     )
 
 
@@ -159,7 +158,8 @@ def call_function(
         result = func(**args) if is_partial_func(
             func) else func(WORK_SUBDIR, **args)
 
-        if not result: raise Exception("No content returned by function" + name)
+        if not result:
+            raise RuntimeError("No content returned by function " + name)
 
     return { "role": "tool", "tool_call_id": call.call_id, "content": result }
 

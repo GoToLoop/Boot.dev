@@ -74,7 +74,8 @@ schema_run_python_file: "ChatCompletionFunctionToolParam" = {
         "description": (
             "Executes a specified Python (.py) file within the working "
             "directory with optional command-line arguments and returns its "
-            "output. Enforces a " f"{TIMEOUT}-second timeout."
+            "both outputs as 1 joined string. It also enforces a "
+            f"{TIMEOUT}-second execution timeout."
         ),
         "parameters": {
             "type": "object",
@@ -92,8 +93,9 @@ schema_run_python_file: "ChatCompletionFunctionToolParam" = {
                     "items": { "type": "string" },
                     "minItems": 0,
                     "description": (
-                        "Command-line variadic arguments tuple to pass to the"
-                        "Python script `file_path`."
+                        "A sequence container representing the command-line's "
+                        "variadic arguments to be passed to the Python script "
+                        "`file_path`."
                     )
                 }
             }

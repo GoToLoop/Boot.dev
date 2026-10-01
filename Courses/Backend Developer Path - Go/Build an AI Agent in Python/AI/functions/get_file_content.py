@@ -35,8 +35,8 @@ schema_get_file_content: "ChatCompletionFunctionToolParam" = {
     "function": {
         "name": "get_file_content",
         "description": (
-            "Reads and returns the content of a specified file relative to the "
-            "working directory. Automatically truncates files larger than "
+            "Reads and returns the text content of a specified file relative to"
+            " the working directory. Automatically truncates files larger than "
             f"{MAX_CHARS:,} characters."
         ),
         "parameters": {

@@ -35,7 +35,8 @@ schema_write_file: "ChatCompletionFunctionToolParam" = {
         "description": (
             "Creates if missing, then writes text content within the working "
             "directory (overwriting if the file exists). Automatically creates "
-            "any missing parent directories too."
+            "any missing parent directories too. Also returns a success string "
+            "message describing filepath and number of characters written."
         ),
         "parameters": {
             "type": "object",
