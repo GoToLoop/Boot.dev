@@ -62,7 +62,7 @@ def main():
     )
 
     response = ask_ai(client, messages, FUNC_SCHEMA)
-    log_ai_response(response, args.verbose)
+    log_ai_responses(response, args.verbose)
 
 
 def ask_ai(
@@ -82,7 +82,7 @@ def ask_ai(
     )
 
 
-def log_ai_response(
+def log_ai_responses(
     response: ChatCompletion,
     verbose=True
 ) -> ChatCompletionMessage | list[ChatCompletionToolMessageParam]:
@@ -96,7 +96,7 @@ def log_ai_response(
 
     if not message.tool_calls:
         print("Response:", message.content, sep='\n')
-        return message # final AI response
+        return message # final AI's response for the user's prompt
 
     call_results: list[ChatCompletionToolMessageParam] = []
 
