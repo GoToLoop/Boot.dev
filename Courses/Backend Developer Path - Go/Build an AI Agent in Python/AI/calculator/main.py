@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 
 from sys import argv
+from json import dumps
 from pkg.calculator import evaluate
-from pkg.render import format_json_output
+
+def format_json_output(exp: str, result: float, indent: int | str = 2) -> str:
+    if isinstance(result, float) and result.is_integer(): result = int(result)
+    return dumps({ "expression": exp, "result": result }, indent=indent)
+
 
 def main() -> None:
     if len(argv) <= 1:
