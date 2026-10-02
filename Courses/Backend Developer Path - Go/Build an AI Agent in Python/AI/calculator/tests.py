@@ -2,8 +2,11 @@
 
 import unittest
 from pkg.calculator import evaluate
+from typing import final, override
 
+@final
 class TestCalculator(unittest.TestCase):
+    @override
     def setUp(self) -> None:
         self.calculator = evaluate
 

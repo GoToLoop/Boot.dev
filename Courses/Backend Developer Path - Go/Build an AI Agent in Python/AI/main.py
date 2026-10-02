@@ -114,9 +114,16 @@ def ask_ai(
     )
 
 
+def get_message_and_usage_from_ai_response(
+    response: ChatCompletion
+) -> tuple[ChatCompletionMessage, CompletionUsage]:
+    if not response.usage: raise RuntimeError("Failed AI request!")
+    return response.choices[0].message, response.usage
+
+
 def log_ai_responses(
     response: ChatCompletion,
-    verbose=True
+    verbose: bool = True
 ) -> ChatCompletionMessage | list[ChatCompletionMessageParam]:
     print("\nModel used:", response.model, '\n')
 
@@ -130,19 +137,19 @@ def log_ai_responses(
         print("Response:", message.content, sep='\n')
         return message # final AI's response for the user's prompt
 
-    assistant: ChatCompletionAssistantMessageParam = {
+    assistant_prompt: ChatCompletionAssistantMessageParam = {
         "role": "assistant",
         "content": message.content,
         "tool_calls": []
     }
 
-    call_results: list[ChatCompletionMessageParam] = [ assistant ]
+    call_results: list[ChatCompletionMessageParam] = [ assistant_prompt ]
 
     for call in get_func_args_from_tool_calls(message.tool_calls):
         print(" - Calling function: " + call.func_name, end='')
         print(verbose and f"({call.named_args})" or "")
 
-        append_new_call_params_to_assistant_role(call, assistant)
+        append_new_call_params_to_assistant_role(call, assistant_prompt)
 
         call_results.append(result := call_function(call))
         if verbose: print(f"\n-> {result['content']}")
@@ -167,11 +174,23 @@ def append_new_call_params_to_assistant_role(
     return tool_call_params
 
 
-def get_message_and_usage_from_ai_response(
-    response: ChatCompletion
-) -> tuple[ChatCompletionMessage, CompletionUsage]:
-    if not response.usage: raise RuntimeError("Failed AI request!")
-    return response.choices[0].message, response.usage
+def call_function(call: FuncNamedArgs) -> ChatCompletionToolMessageParam:
+    if (name := call.func_name) not in FUNC_MAP:
+        result = "Error: Unknown function: " + name
+
+    else:
+        func = FUNC_MAP[name]
+        args = call.named_args
+
+        result = func(**args) if is_partial_func(
+            func) else func(WORK_DIR, **args)
+
+        if not result:
+            raise RuntimeError("No content returned by function " + name)
+
+    return ChatCompletionToolMessageParam(
+        role="tool", tool_call_id=call.call_id, content=result
+    )
 
 
 def get_func_args_from_tool_calls(
@@ -198,25 +217,6 @@ def mapped_func_args(
         func_call.id,
         func_call.function.name,
         json.loads(func_call.function.arguments or "{}")
-    )
-
-
-def call_function(call: FuncNamedArgs) -> ChatCompletionToolMessageParam:
-    if (name := call.func_name) not in FUNC_MAP:
-        result = "Error: Unknown function: " + name
-
-    else:
-        func = FUNC_MAP[name]
-        args = call.named_args
-
-        result = func(**args) if is_partial_func(
-            func) else func(WORK_DIR, **args)
-
-        if not result:
-            raise RuntimeError("No content returned by function " + name)
-
-    return ChatCompletionToolMessageParam(
-        role="tool", tool_call_id=call.call_id, content=result
     )
 
 
