@@ -16,16 +16,28 @@ from openai.types import CompletionUsage
 from openai.types.shared import ChatModel
 
 from openai.types.chat import (
-    ChatCompletion, ChatCompletionMessage, ChatCompletionToolMessageParam,
-    ChatCompletionMessageParam, ChatCompletionToolUnionParam,
-    ChatCompletionMessageToolCallUnion, ChatCompletionMessageFunctionToolCall
+    ChatCompletion,
+    ChatCompletionMessage,
+    ChatCompletionMessageParam,
+    ChatCompletionToolMessageParam,
+    ChatCompletionToolUnionParam,
+    ChatCompletionMessageToolCallUnion,
+    ChatCompletionMessageFunctionToolCall,
+    ChatCompletionAssistantMessageParam,
+    ChatCompletionMessageFunctionToolCallParam
+)
+
+from openai.types.chat.chat_completion_message_function_tool_call_param import (
+    Function
 )
 
 AI_API_KEY_NAME = "OPENROUTER_API_KEY"
 AI_MODEL = "openrouter/free"
 AI_URL = "https://OpenRouter.ai/api/v1"
 
-NamedArgs = dict[str, Sequence[str] | str]
+AI_MAX_ITERS = 20; AI_MAX_ITERS_RANGE = range(AI_MAX_ITERS)
+
+NamedArgs = dict[str, list[str] | str]
 
 class FuncNamedArgs(NamedTuple):
     call_id: str
@@ -42,7 +54,10 @@ def parse_cli_args() -> Cli_Prompt_Args:
     parser = ArgumentParser(description="AI Code Assistant Agent")
 
     parser.add_argument("user_prompt", type=str, help="AI prompt")
-    parser.add_argument("--verbose", action="store_true", help="Verbose output")
+
+    parser.add_argument(
+        "-v", "--verbose", action="store_true", help="Verbose output"
+    )
 
     return parser.parse_args( namespace=Cli_Prompt_Args() )
 
@@ -56,13 +71,22 @@ def main():
 
     client = OpenAI( base_url=AI_URL, api_key=api_key )
 
-    messages: tuple[ChatCompletionMessageParam, ...] = (
+    messages: list[ChatCompletionMessageParam] = [
         { "role": "system", "content": SYSTEM_PROMPT },
         { "role": "user", "content": args.user_prompt }
-    )
+    ]
 
-    response = ask_ai(client, messages, FUNC_SCHEMA)
-    log_ai_responses(response, args.verbose)
+    for _ in AI_MAX_ITERS_RANGE:
+        response = ask_ai(client, messages, FUNC_SCHEMA)
+        chat_completion = log_ai_responses(response, args.verbose)
+
+        if isinstance(chat_completion, Sequence): messages += chat_completion
+        else: break # No more tool calls requested by the AI assistant
+
+    else:
+        print(AI_MAX_ITERS, "AI max iterations has been reached!")
+        print("Cancelling this AI agent session to save tokens!")
+        exit(1)
 
 
 def ask_ai(
@@ -85,8 +109,8 @@ def ask_ai(
 def log_ai_responses(
     response: ChatCompletion,
     verbose=True
-) -> ChatCompletionMessage | list[ChatCompletionToolMessageParam]:
-    print("Model used:", response.model, '\n')
+) -> ChatCompletionMessage | list[ChatCompletionMessageParam]:
+    print("\nModel used:", response.model, '\n')
 
     message, usage = get_message_and_usage_from_ai_response(response)
  
@@ -98,16 +122,42 @@ def log_ai_responses(
         print("Response:", message.content, sep='\n')
         return message # final AI's response for the user's prompt
 
-    call_results: list[ChatCompletionToolMessageParam] = []
+    assistant: ChatCompletionAssistantMessageParam = {
+        "role": "assistant",
+        "content": message.content,
+        "tool_calls": []
+    }
+
+    call_results: list[ChatCompletionMessageParam] = [ assistant ]
 
     for call in get_func_args_from_tool_calls(message.tool_calls):
         print(" - Calling function: " + call.func_name, end='')
         print(verbose and f"({call.named_args})" or "")
 
+        append_new_call_params_to_assistant_role(call, assistant)
+
         call_results.append(result := call_function(call))
         if verbose: print(f"\n-> {result['content']}")
 
     return call_results
+
+
+def append_new_call_params_to_assistant_role(
+    call: FuncNamedArgs,
+    assistant: ChatCompletionAssistantMessageParam
+) -> ChatCompletionMessageFunctionToolCallParam:
+    name = call.func_name
+    args = json.dumps(call.named_args)
+    func = Function(name=name, arguments=args)
+
+    tool_call_params = ChatCompletionMessageFunctionToolCallParam(
+        id=call.call_id, type="function", function=func
+    )
+
+    if "tool_calls" in assistant and isinstance(assistant["tool_calls"], list):
+        assistant["tool_calls"].append(tool_call_params)
+
+    return tool_call_params
 
 
 def get_message_and_usage_from_ai_response(
@@ -119,10 +169,10 @@ def get_message_and_usage_from_ai_response(
 
 def get_func_args_from_tool_calls(
     tool_calls: Iterable[ChatCompletionMessageToolCallUnion]
-) -> tuple[FuncNamedArgs, ...]:
-    # return tuple(map(mapped_func_args, filter(is_func_predicate, tool_calls)))
+) -> Iterable[FuncNamedArgs]:
+    # return map( mapped_func_args, filter(is_func_tool, tool_calls) )
 
-    return tuple(
+    return (
         mapped_func_args(tool_call)
         for tool_call in tool_calls if is_func_tool(tool_call)
     )
@@ -137,6 +187,7 @@ def is_func_tool(
 def mapped_func_args(
     func_call: ChatCompletionMessageFunctionToolCall
 ) -> FuncNamedArgs:
+
     return FuncNamedArgs(
         func_call.id,
         func_call.function.name,
@@ -158,7 +209,9 @@ def call_function(call: FuncNamedArgs) -> ChatCompletionToolMessageParam:
         if not result:
             raise RuntimeError("No content returned by function " + name)
 
-    return { "role": "tool", "tool_call_id": call.call_id, "content": result }
+    return ChatCompletionToolMessageParam(
+        role="tool", tool_call_id=call.call_id, content=result
+    )
 
 
 if __name__ == "__main__": main()
