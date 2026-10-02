@@ -83,6 +83,7 @@ def main():
     )
 
     messages: list[ChatCompletionMessageParam] = [ sys_behavior, user_prompt ]
+    exit_code = 0 # 0: Success; 1: Failure
 
     for _ in AI_MAX_ITERS_RANGE:
         response = ask_ai(client, messages, FUNC_SCHEMA)
@@ -94,7 +95,9 @@ def main():
     else:
         print(AI_MAX_ITERS, "AI max iterations has been reached!")
         print("Cancelling this AI agent session to save tokens!")
-        exit(1)
+        exit_code = 1 # Failure
+
+    exit(exit_code)
 
 
 def ask_ai(
@@ -122,8 +125,7 @@ def get_message_and_usage_from_ai_response(
 
 
 def log_ai_responses(
-    response: ChatCompletion,
-    verbose: bool = True
+    response: ChatCompletion, verbose: bool = True
 ) -> ChatCompletionMessage | list[ChatCompletionMessageParam]:
     print("\nModel used:", response.model, '\n')
 
@@ -158,8 +160,7 @@ def log_ai_responses(
 
 
 def append_new_call_params_to_assistant_role(
-    call: FuncNamedArgs,
-    assistant: ChatCompletionAssistantMessageParam
+    call: FuncNamedArgs, assistant: ChatCompletionAssistantMessageParam
 ) -> ChatCompletionMessageFunctionToolCallParam:
     args = json.dumps(call.named_args)
     func = Function(name=call.func_name, arguments=args)
