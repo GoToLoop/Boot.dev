@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from functions.write_file import write_file
-from functions.calculator import WORK_DIR
+from functions.partial import WORK_DIR
 
 FEEDBACK = "'%s' feedback:\n%s\n"
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from functions.run_python_file import run_python_file
-from functions.calculator import WORK_DIR
+from functions.partial import WORK_DIR
 
 OUTPUT = "%s output:\n%s\n"
 

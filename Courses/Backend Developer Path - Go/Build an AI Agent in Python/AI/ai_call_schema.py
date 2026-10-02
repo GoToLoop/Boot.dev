@@ -1,4 +1,4 @@
-from functions.calculator import *
+from functions.partial import *
 from collections.abc import Callable
 
 FUNC_SCHEMA = (

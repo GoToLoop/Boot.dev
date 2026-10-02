@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from functions.get_files_info import get_files_info
-from functions.calculator import WORK_DIR
+from functions.partial import WORK_DIR
 
 RESULT = "Result for '%s' directory:\n%s\n"
 FILENAMES = "pkg", "/bin", "../"

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from functions.get_file_content import get_file_content, MAX_CHARS
-from functions.calculator import WORK_DIR
+from functions.partial import WORK_DIR
 
 FILENAME = "lorem.txt"
 CONTENT = "'%s' content:\n```\n%s\n```\n"

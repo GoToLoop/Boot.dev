@@ -174,7 +174,9 @@ def append_new_call_params_to_assistant_role(
     return tool_call_params
 
 
-def call_function(call: FuncNamedArgs) -> ChatCompletionToolMessageParam:
+def call_function(
+    call: FuncNamedArgs, work_dir: str = WORK_DIR
+) -> ChatCompletionToolMessageParam:
     if (name := call.func_name) not in FUNC_MAP:
         result = "Error: Unknown function: " + name
 
@@ -183,7 +185,7 @@ def call_function(call: FuncNamedArgs) -> ChatCompletionToolMessageParam:
         args = call.named_args
 
         result = func(**args) if is_partial_func(
-            func) else func(WORK_DIR, **args)
+            func) else func(work_dir, **args)
 
         if not result:
             raise RuntimeError("No content returned by function " + name)
