@@ -25,6 +25,8 @@ from openai.types.chat import (
     ChatCompletionMessageToolCallUnion,
     ChatCompletionMessageFunctionToolCall,
     ChatCompletionAssistantMessageParam,
+    ChatCompletionSystemMessageParam,
+    ChatCompletionUserMessageParam,
     ChatCompletionMessageFunctionToolCallParam
 )
 
@@ -72,10 +74,15 @@ def main():
 
     client = OpenAI( base_url=AI_URL, api_key=api_key )
 
-    messages: list[ChatCompletionMessageParam] = [
-        { "role": "system", "content": SYSTEM_PROMPT },
-        { "role": "user", "content": args.user_prompt }
-    ]
+    sys_behavior = ChatCompletionSystemMessageParam(
+        role="system", content=SYSTEM_PROMPT
+    )
+
+    user_prompt = ChatCompletionUserMessageParam(
+        role="user", content=args.user_prompt
+    )
+
+    messages: list[ChatCompletionMessageParam] = [ sys_behavior, user_prompt ]
 
     for _ in AI_MAX_ITERS_RANGE:
         response = ask_ai(client, messages, FUNC_SCHEMA)
@@ -147,13 +154,11 @@ def append_new_call_params_to_assistant_role(
     call: FuncNamedArgs,
     assistant: ChatCompletionAssistantMessageParam
 ) -> ChatCompletionMessageFunctionToolCallParam:
-    id = call.call_id
-    name = call.func_name
     args = json.dumps(call.named_args)
-    func = Function(name=name, arguments=args)
+    func = Function(name=call.func_name, arguments=args)
 
     tool_call_params = ChatCompletionMessageFunctionToolCallParam(
-        id=id, type="function", function=func
+        id=call.call_id, type="function", function=func
     )
 
     if "tool_calls" in assistant and isinstance(assistant["tool_calls"], list):
