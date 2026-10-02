@@ -146,12 +146,13 @@ def append_new_call_params_to_assistant_role(
     call: FuncNamedArgs,
     assistant: ChatCompletionAssistantMessageParam
 ) -> ChatCompletionMessageFunctionToolCallParam:
+    id = call.call_id
     name = call.func_name
     args = json.dumps(call.named_args)
     func = Function(name=name, arguments=args)
 
     tool_call_params = ChatCompletionMessageFunctionToolCallParam(
-        id=call.call_id, type="function", function=func
+        id=id, type="function", function=func
     )
 
     if "tool_calls" in assistant and isinstance(assistant["tool_calls"], list):
