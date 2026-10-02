@@ -3,7 +3,8 @@
 from prompts import SYSTEM_PROMPT
 from ai_call_schema import FUNC_SCHEMA, FUNC_MAP, WORK_DIR, is_partial_func
 
-from typing import NamedTuple, Iterable, Sequence, Optional, TypeIs
+from typing import NamedTuple, Optional, TypeIs
+from collections.abc import Iterable, Iterator, Sequence
 
 from os import environ
 from argparse import ArgumentParser, Namespace
@@ -170,7 +171,7 @@ def get_message_and_usage_from_ai_response(
 
 def get_func_args_from_tool_calls(
     tool_calls: Iterable[ChatCompletionMessageToolCallUnion]
-) -> Iterable[FuncNamedArgs]:
+) -> Iterator[FuncNamedArgs]:
     # return map( mapped_func_args, filter(is_func_tool, tool_calls) )
 
     return (
@@ -188,7 +189,6 @@ def is_func_tool(
 def mapped_func_args(
     func_call: ChatCompletionMessageFunctionToolCall
 ) -> FuncNamedArgs:
-
     return FuncNamedArgs(
         func_call.id,
         func_call.function.name,
