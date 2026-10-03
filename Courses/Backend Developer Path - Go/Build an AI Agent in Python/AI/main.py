@@ -6,13 +6,14 @@ from ai_call_schema import FUNC_SCHEMA, FUNC_MAP, WORK_DIR, is_partial_func
 from typing import NamedTuple, Optional, TypeIs
 from collections.abc import Iterable, Iterator, Sequence
 
-from os import environ
-from argparse import ArgumentParser, Namespace
 import json
+from os import environ
+from time import sleep
+from argparse import ArgumentParser, Namespace
 
 from dotenv import load_dotenv
 
-from openai import OpenAI, Omit, omit
+from openai import APIStatusError, RateLimitError, OpenAI, Omit, omit
 from openai.types import CompletionUsage
 from openai.types.shared import ChatModel
 
@@ -30,7 +31,7 @@ from openai.types.chat import (
 )
 
 from openai.types.chat.chat_completion_message_function_tool_call_param import (
-    ChatCompletionMessageFunctionToolCallParam, Function
+    ChatCompletionMessageFunctionToolCallParam, Function as Requested_Func_Args
 )
 
 AI_API_KEY_NAME = "OPENROUTER_API_KEY"
@@ -38,6 +39,7 @@ AI_MODEL = "openrouter/free"
 AI_URL = "https://OpenRouter.ai/api/v1"
 
 AI_MAX_ITERS = 20; AI_MAX_ITERS_RANGE = range(AI_MAX_ITERS)
+SLEEP_DELAY = 3 # sleep pause in seconds
 
 NamedArgs = dict[str, list[str] | str]
 
@@ -91,6 +93,8 @@ def main():
 
     for _ in AI_MAX_ITERS_RANGE:
         response = ask_ai(client, messages, FUNC_SCHEMA)
+        if not response: continue
+
         chat_completion, token_usage = log_ai_responses(response, args.verbose)
 
         merge_token_usage(token_count, token_usage)
@@ -116,14 +120,22 @@ def ask_ai(
     model: ChatModel | str = AI_MODEL,
     randomness: Optional[float | Omit] = 0,
     sampling_size: Optional[float | Omit] = omit
-) -> ChatCompletion:
-    return client.chat.completions.create(
+) -> ChatCompletion | None:
+    try: return client.chat.completions.create(
         messages=messages,
         model=model,
         tools=functions,
         temperature=randomness,
         top_p=sampling_size
     )
+
+    except RateLimitError as e:
+        print("\nAPI call rate limit exceeded with code status:", e.status_code)
+        sleep(SLEEP_DELAY) # delaying next AI API request...
+
+    except APIStatusError as e:
+        print(f"API Status Error {e.status_code}:", e.message)
+        sleep(SLEEP_DELAY) # delaying next AI API request...
 
 
 def get_message_and_usage_from_ai_response(
@@ -191,7 +203,7 @@ def append_new_call_params_to_assistant_role(
     call: FuncNamedArgs, assistant: ChatCompletionAssistantMessageParam
 ) -> ChatCompletionMessageFunctionToolCallParam:
     args = json.dumps(call.named_args)
-    func = Function(name=call.func_name, arguments=args)
+    func = Requested_Func_Args(name=call.func_name, arguments=args)
 
     tool_call_params = ChatCompletionMessageFunctionToolCallParam(
         id=call.call_id, type="function", function=func
