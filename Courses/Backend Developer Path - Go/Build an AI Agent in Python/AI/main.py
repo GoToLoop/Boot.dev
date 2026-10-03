@@ -74,6 +74,10 @@ def main():
 
     client = OpenAI( base_url=AI_URL, api_key=api_key )
 
+    token_count = CompletionUsage(
+        prompt_tokens=0, completion_tokens=0, total_tokens=0
+    )
+
     sys_behavior = ChatCompletionSystemMessageParam(
         role="system", content=SYSTEM_PROMPT
     )
@@ -83,11 +87,13 @@ def main():
     )
 
     messages: list[ChatCompletionMessageParam] = [ sys_behavior, user_prompt ]
-    exit_code = 0 # 0: Success; 1: Failure
+    exit_code = 0 # 0: Success, 1: Failure
 
     for _ in AI_MAX_ITERS_RANGE:
         response = ask_ai(client, messages, FUNC_SCHEMA)
-        chat_completion = log_ai_responses(response, args.verbose)
+        chat_completion, token_usage = log_ai_responses(response, args.verbose)
+
+        merge_token_usage(token_count, token_usage)
 
         if isinstance(chat_completion, Sequence): messages += chat_completion
         else: break # No more tool calls requested by the AI assistant
@@ -96,6 +102,9 @@ def main():
         print(AI_MAX_ITERS, "AI max iterations has been reached!")
         print("Cancelling this AI agent session to save tokens!")
         exit_code = 1 # Failure
+
+    print("\n- Total spent tokens for this session:")
+    log_ai_token_usage(token_count)
 
     exit(exit_code)
 
@@ -124,20 +133,39 @@ def get_message_and_usage_from_ai_response(
     return response.choices[0].message, response.usage
 
 
+def merge_token_usage(
+    target: CompletionUsage, source: CompletionUsage
+) -> CompletionUsage:
+    target.prompt_tokens += source.prompt_tokens
+    target.completion_tokens += source.completion_tokens
+    target.total_tokens += source.total_tokens
+
+    return target
+
+
+def log_ai_token_usage(token_stat: CompletionUsage) -> CompletionUsage:
+    print("Prompt tokens:", token_stat.prompt_tokens)
+    print("Response tokens:", token_stat.completion_tokens)
+    print("Total tokens:", token_stat.total_tokens, '\n')
+
+    return token_stat
+
+
 def log_ai_responses(
     response: ChatCompletion, verbose: bool = True
-) -> ChatCompletionMessage | list[ChatCompletionMessageParam]:
+) -> tuple[
+        ChatCompletionMessage | list[ChatCompletionMessageParam],
+        CompletionUsage
+    ]:
     print("\nModel used:", response.model, '\n')
 
     message, usage = get_message_and_usage_from_ai_response(response)
  
-    if verbose:
-        print("Prompt tokens:", usage.prompt_tokens)
-        print("Response tokens:", usage.completion_tokens, '\n')
+    if verbose: log_ai_token_usage(usage)
 
     if not message.tool_calls:
         print("Response:", message.content, sep='\n')
-        return message # final AI's response for the user's prompt
+        return message, usage # final AI's response for the user's prompt
 
     assistant_prompt: ChatCompletionAssistantMessageParam = {
         "role": "assistant",
@@ -156,7 +184,7 @@ def log_ai_responses(
         call_results.append(result := call_function(call))
         if verbose: print(f"\n-> {result['content']}")
 
-    return call_results
+    return call_results, usage
 
 
 def append_new_call_params_to_assistant_role(
