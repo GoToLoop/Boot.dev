@@ -194,7 +194,7 @@ def log_ai_responses(
         append_new_call_params_to_assistant_role(call, assistant_prompt)
 
         call_results.append(result := call_function(call))
-        if verbose: print(f"\n-> {result['content']}")
+        if verbose: print(f"\n```\n{result['content']}\n```")
 
     return call_results, usage
 

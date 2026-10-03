@@ -8,7 +8,7 @@ OPERATORS: dict[Operator, Calc] = {
     '+': lambda a, b: a + b,
     '-': lambda a, b: a - b,
     '*': lambda a, b: a * b,
-    '/': lambda a, b: a / b
+    '/': lambda a, b: a / b if b else 0
 }
 
 PRECEDENCES: dict[Operator, int] = { '+': 1, '-': 1, '*': 2, '/': 2 }
@@ -17,7 +17,7 @@ def evaluate(
     expression: str, _ops: list[Operator] = [], _vals: list[float] = []
 ) -> Optional[float]:
     if not expression or expression.isspace(): return None
-    _ops.clear; _vals.clear()
+    _ops.clear(); _vals.clear()
     return _evaluate_infix(expression.strip().split(), _ops, _vals)
 
 
