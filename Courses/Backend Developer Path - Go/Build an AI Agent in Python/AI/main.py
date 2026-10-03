@@ -26,12 +26,11 @@ from openai.types.chat import (
     ChatCompletionMessageFunctionToolCall,
     ChatCompletionAssistantMessageParam,
     ChatCompletionSystemMessageParam,
-    ChatCompletionUserMessageParam,
-    ChatCompletionMessageFunctionToolCallParam
+    ChatCompletionUserMessageParam
 )
 
 from openai.types.chat.chat_completion_message_function_tool_call_param import (
-    Function
+    ChatCompletionMessageFunctionToolCallParam, Function
 )
 
 AI_API_KEY_NAME = "OPENROUTER_API_KEY"
@@ -46,6 +45,7 @@ class FuncNamedArgs(NamedTuple):
     call_id: str
     func_name: str
     named_args: NamedArgs
+    json_error: str
 
 
 class Cli_Prompt_Args(Namespace):
@@ -209,6 +209,8 @@ def call_function(
     if (name := call.func_name) not in FUNC_MAP:
         result = "Error: Unknown function: " + name
 
+    elif call.json_error: result = call.json_error
+
     else:
         func = FUNC_MAP[name]
         args = call.named_args
@@ -244,10 +246,28 @@ def is_func_tool(
 def mapped_func_args(
     func_call: ChatCompletionMessageFunctionToolCall
 ) -> FuncNamedArgs:
+    raw_args = func_call.function.arguments or "{}"
+    json_err = ""
+
+    try: parsed_args: NamedArgs = json.loads(raw_args)
+
+    except json.JSONDecodeError as e:
+        parsed_args = {}
+
+        json_err = (
+            "Error: Failed to parse arguments '" + raw_args + "' as valid JSON!"
+            "\nPlease make sure your named arguments conform to the requested "
+            "`ChatCompletionToolUnionParam` schema and try again.\n"
+            "`JSONDecodeError` message: " + e.msg + "\nwhile deserializing "
+            "JSON document '" + e.doc + "' via `json.loads()` at index "
+            f"position [{e.pos}]."
+        )
+
     return FuncNamedArgs(
         func_call.id,
         func_call.function.name,
-        json.loads(func_call.function.arguments or "{}")
+        parsed_args,
+        json_err
     )
 
 
