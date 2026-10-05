@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from prompts import SYSTEM_PROMPT
-from ai_call_schema import FUNC_SCHEMA, FUNC_MAP, WORK_DIR, is_partial_func
+from ai_call_schema import FUNC_SCHEMA, FUNC_MAP, WORK_DIR, partial_func
 
 from typing import NamedTuple, Optional, TypeIs
 from collections.abc import Iterable, Iterator, Sequence
@@ -228,11 +228,8 @@ def call_function(
         args = call.named_args
 
         try:
-            res = func(**args) if is_partial_func(
-                func) else func(work_dir, **args)
-
-            if not res:
-                raise RuntimeError(f"No content returned by func '{name}()'!")
+            res = func(**args) if partial_func(func) else func(work_dir, **args)
+            assert res, f"Error: Function '{name}()' returned empty content."
 
         except TypeError as e:
             res = (
