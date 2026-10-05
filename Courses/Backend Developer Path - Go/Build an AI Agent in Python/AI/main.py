@@ -229,7 +229,7 @@ def call_function(
 
         try:
             res = func(**args) if partial_func(func) else func(work_dir, **args)
-            assert res, f"Error: Function '{name}()' returned empty content."
+            assert res, f"Function '{name}()' has to return a non-empty string!"
 
         except TypeError as e:
             res = (
