@@ -219,7 +219,7 @@ def call_function(
     call: FuncNamedArgs, work_dir: str = WORK_DIR
 ) -> ChatCompletionToolMessageParam:
     if (name := call.func_name) not in FUNC_MAP:
-        res = "Error: Unknown function: " + name
+        res = f"Error: Unknown function: '{name}()'!"
 
     elif call.json_error: res = call.json_error
 
@@ -227,10 +227,18 @@ def call_function(
         func = FUNC_MAP[name]
         args = call.named_args
 
-        res = func(**args) if is_partial_func(func) else func(work_dir, **args)
+        try:
+            res = func(**args) if is_partial_func(
+                func) else func(work_dir, **args)
 
-        if not res:
-            raise RuntimeError("No content returned by function " + name)
+            if not res:
+                raise RuntimeError(f"No content returned by func '{name}()'!")
+
+        except TypeError as e:
+            res = (
+                f"Error: Invalid arguments for '{name}()': {e}! Please check "
+                "the tool schema and try again without unsupported parameters."
+            )
 
     return ChatCompletionToolMessageParam(
         role="tool", tool_call_id=call.call_id, content=res
