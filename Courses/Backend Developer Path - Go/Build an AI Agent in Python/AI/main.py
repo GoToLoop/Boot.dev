@@ -236,7 +236,7 @@ def call_function(
 
         except TypeError as e:
             res = (
-                f"Error: Invalid arguments for '{name}()': {e}! Please check "
+                f"Error: Invalid arguments for '{name}()': {e}!\nPlease check "
                 "the tool schema and try again without unsupported parameters."
             )
 
