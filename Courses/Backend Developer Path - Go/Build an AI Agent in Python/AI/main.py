@@ -231,10 +231,11 @@ def call_function(
             res = func(**args) if partial_func(func) else func(work_dir, **args)
             assert res, f"Function '{name}()' has to return a non-empty string!"
 
-        except TypeError:
+        except TypeError as e:
             res = (
-                f"Error: Invalid arguments {args} for '{name}()'!\nPlease check"
+                f"Error: Invalid arguments for '{name}({args})'!\nPlease check"
                 " the tool schema and try again without unsupported parameters."
+                f"\n`TypeError` log: '{e}'"
             )
 
     return ChatCompletionToolMessageParam(
