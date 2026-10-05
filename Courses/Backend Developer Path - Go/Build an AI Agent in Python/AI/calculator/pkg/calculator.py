@@ -1,17 +1,23 @@
 from collections.abc import Callable, Sequence
 from typing import Literal, Optional
+from math import inf, nan, copysign
 
-Operator = Literal['+', '-', '*', '/']
+Operator = Literal['+', '-', '*', '/', '//', '%', '**']
 Calc = Callable[[float, float], float]
 
 OPERATORS: dict[Operator, Calc] = {
-    '+': lambda a, b: a + b,
-    '-': lambda a, b: a - b,
-    '*': lambda a, b: a * b,
-    '/': lambda a, b: a / b if b else 0
+    '+':  lambda a, b: a + b,
+    '-':  lambda a, b: a - b,
+    '*':  lambda a, b: a * b,
+    '/':  lambda a, b: a / b  if b else a and copysign(inf, a) or nan,
+    '//': lambda a, b: a // b if b else a and copysign(inf, a) or nan,
+    '%':  lambda a, b: a % b  if b else nan,
+    '**': lambda a, b: inf if a == 0 and b < 0 else a ** b
 }
 
-PRECEDENCES: dict[Operator, int] = { '+': 1, '-': 1, '*': 2, '/': 2 }
+PRECEDENCES: dict[Operator, int] = {
+    '+': 1, '-': 1, '*': 2, '/': 2, '//': 2, '%': 2, '**': 3
+}
 
 def evaluate(
     expression: str, _ops: list[Operator] = [], _vals: list[float] = []
@@ -21,7 +27,7 @@ def evaluate(
     return _evaluate_infix(expression.strip().split(), _ops, _vals)
 
 
-def evaluate_threaded(
+def evaluate_safe(
     expression: str, operations: list[Operator], values: list[float]
 ) -> Optional[float]:
     if not expression or expression.isspace(): return None
@@ -61,7 +67,5 @@ def _apply_operator(operators: list[Operator], values: list[float]):
 
 
 __all__ = (
-    "evaluate", "evaluate_threaded",
-    "Operator", "Calc",
-    "OPERATORS", "PRECEDENCES"
+    "evaluate", "evaluate_safe", "Operator", "Calc", "OPERATORS", "PRECEDENCES"
 )

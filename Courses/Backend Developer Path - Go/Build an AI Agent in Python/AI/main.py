@@ -219,22 +219,21 @@ def call_function(
     call: FuncNamedArgs, work_dir: str = WORK_DIR
 ) -> ChatCompletionToolMessageParam:
     if (name := call.func_name) not in FUNC_MAP:
-        result = "Error: Unknown function: " + name
+        res = "Error: Unknown function: " + name
 
-    elif call.json_error: result = call.json_error
+    elif call.json_error: res = call.json_error
 
     else:
         func = FUNC_MAP[name]
         args = call.named_args
 
-        result = func(**args) if is_partial_func(
-            func) else func(work_dir, **args)
+        res = func(**args) if is_partial_func(func) else func(work_dir, **args)
 
-        if not result:
+        if not res:
             raise RuntimeError("No content returned by function " + name)
 
     return ChatCompletionToolMessageParam(
-        role="tool", tool_call_id=call.call_id, content=result
+        role="tool", tool_call_id=call.call_id, content=res
     )
 
 
@@ -270,7 +269,7 @@ def mapped_func_args(
             "Error: Failed to parse arguments '" + raw_args + "' as valid JSON!"
             "\nPlease make sure your named arguments conform to the requested "
             "`ChatCompletionToolUnionParam` schema and try again.\n"
-            "`JSONDecodeError` message: " + e.msg + "\nwhile deserializing "
+            "`JSONDecodeError` message: " + e.msg + "\n... while deserializing "
             "JSON document '" + e.doc + "' via `json.loads()` at index "
             f"position [{e.pos}]."
         )
