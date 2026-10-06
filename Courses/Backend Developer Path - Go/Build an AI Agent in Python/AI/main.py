@@ -9,13 +9,12 @@ from collections.abc import Iterable, Iterator, Sequence
 import json
 from os import environ
 from time import sleep
-from argparse import ArgumentParser, Namespace
 
+from argparse import ArgumentParser, Namespace
 from dotenv import load_dotenv
 
-from openai import APIStatusError, RateLimitError, OpenAI, Omit, omit
-from openai.types import CompletionUsage
-from openai.types.shared import ChatModel
+from openai import OpenAI, APIStatusError, RateLimitError, Omit, omit
+from openai.types import CompletionUsage, ChatModel
 
 from openai.types.chat import (
     ChatCompletion,
@@ -264,12 +263,12 @@ def mapped_func_args(
     func_call: ChatCompletionMessageFunctionToolCall
 ) -> FuncNamedArgs:
     raw_args = func_call.function.arguments or "{}"
-    json_err = ""
+    json_err = "" # empty string = no error
 
     try: parsed_args: NamedArgs = json.loads(raw_args)
 
     except json.JSONDecodeError as e:
-        parsed_args = {}
+        parsed_args = {} # an empty dict to satisfy NamedTuple `FuncNamedArgs`
 
         json_err = (
             "Error: Failed to parse arguments '" + raw_args + "' as valid JSON!"

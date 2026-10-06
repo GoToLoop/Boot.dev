@@ -5,7 +5,7 @@ if TYPE_CHECKING: from openai.types.chat import ChatCompletionFunctionToolParam
 
 DESCRIPTION = "- %s: file_size=%d bytes, is_dir=%s"
 
-def get_files_info(working_directory: str, directory: str = '.') -> str:
+def get_files_info(working_directory: str, /, directory: str = '.') -> str:
     if not path.isdir(wd := path.abspath(working_directory)):
         return 'Error: "' + working_directory + '" is not a directory'
 

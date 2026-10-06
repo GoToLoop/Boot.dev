@@ -10,10 +10,10 @@ PYTHON = "python3" # executable
 TIMEOUT = 30 # seconds
 
 def run_python_file(
-    working_directory: str, file_path: str, args: Optional[Sequence[str]] = None
+    work_dir: str, /, file_path: str, args: Optional[Sequence[str]] = None
 ) -> str:
-    if not isdir(wd := abspath(working_directory)):
-        return 'Error: "' + working_directory + '" is not a directory'
+    if not isdir(wd := abspath(work_dir)):
+        return 'Error: "' + work_dir + '" is not a directory'
 
     if not isfile(target_file := normpath(join(wd, file_path))): return\
         'Error: "' + file_path + '" does not exist or is not a regular file'

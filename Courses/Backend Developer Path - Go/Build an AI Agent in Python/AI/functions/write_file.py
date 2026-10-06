@@ -4,9 +4,9 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING: from openai.types.chat import ChatCompletionFunctionToolParam
 
-def write_file(working_directory: str, rel_file_path: str, content: str) -> str:
-    if not isdir(wd := abspath(working_directory)):
-        return 'Error: "' + working_directory + '" is not a directory'
+def write_file(work_dir: str, /, rel_file_path: str, content: str) -> str:
+    if not isdir(wd := abspath(work_dir)):
+        return 'Error: "' + work_dir + '" is not a directory'
 
     if isdir(target_file := normpath(join(wd, rel_file_path))): return\
         'Error: Cannot write to "' + rel_file_path + '" as it is a directory'

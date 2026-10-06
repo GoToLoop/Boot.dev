@@ -6,7 +6,7 @@ if TYPE_CHECKING: from openai.types.chat import ChatCompletionFunctionToolParam
 MAX_CHARS = 10_000
 TRUNCATED = f'[...File "%s" truncated at {MAX_CHARS} characters]'
 
-def get_file_content(working_directory: str, rel_file_path: str) -> str:
+def get_file_content(working_directory: str, /, rel_file_path: str) -> str:
     if not isdir(wd := abspath(working_directory)):
         return 'Error: "' + working_directory + '" is not a directory'
 
