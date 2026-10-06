@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from prompts import SYSTEM_PROMPT
-from ai_call_schema import FUNC_SCHEMA, FUNC_MAP, WORK_DIR, partial_func
+from call_funcs import FUNC_SCHEMA, FUNC_MAP, FUNC_NAMES, WORK_DIR, partial_func
 
 from typing import NamedTuple, Optional, TypeIs
 from collections.abc import Iterable, Iterator, Sequence
@@ -234,7 +234,8 @@ def call_function(
         except TypeError:
             res = (
                 f"Error: Invalid arguments {args} for '{name}()'!\nPlease check"
-                " the tool schema and try again without unsupported parameters."
+                " its tool schema and try again without unsupported parameters:"
+                f"\n{FUNC_SCHEMA[ FUNC_NAMES.index(name) ]}"
             )
 
     return ChatCompletionToolMessageParam(
