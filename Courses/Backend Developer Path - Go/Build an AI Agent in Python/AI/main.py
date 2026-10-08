@@ -30,7 +30,7 @@ from openai.types.chat import (
 )
 
 from openai.types.chat.chat_completion_message_function_tool_call_param import (
-    ChatCompletionMessageFunctionToolCallParam, Function as Requested_Func_Args
+    ChatCompletionMessageFunctionToolCallParam, Function as RequestedFuncArgs
 )
 
 AI_API_KEY_NAME = "OPENROUTER_API_KEY"
@@ -38,23 +38,21 @@ AI_MODEL = "openrouter/free"
 AI_URL = "https://OpenRouter.ai/api/v1"
 
 AI_MAX_ITERS = 20; AI_MAX_ITERS_RANGE = range(AI_MAX_ITERS)
-SLEEP_DELAY = 3 # sleep pause in seconds
+SLEEP_DELAY = 5 # sleep pause in seconds
 
 NamedArgs = dict[str, list[str] | str]
+"""{ param_name: param_type }"""
 
-class FuncNamedArgs(NamedTuple):
-    call_id: str
-    func_name: str
-    named_args: NamedArgs
-    json_error: str
+FuncNamedArgs = NamedTuple("FunctionNamedArgs", (
+    ("call_id", str),
+    ("func_name", str),
+    ("named_args", NamedArgs),
+    ("json_error", str)
+))
 
+class CliPromptArgs(Namespace): user_prompt: str; verbose: bool
 
-class Cli_Prompt_Args(Namespace):
-    user_prompt: str
-    verbose: bool
-
-
-def parse_cli_args() -> Cli_Prompt_Args:
+def parse_cli_args() -> CliPromptArgs:
     parser = ArgumentParser(description="AI Code Assistant Agent")
 
     parser.add_argument("user_prompt", type=str, help="AI prompt")
@@ -63,7 +61,7 @@ def parse_cli_args() -> Cli_Prompt_Args:
         "-v", "--verbose", action="store_true", help="Verbose output"
     )
 
-    return parser.parse_args( namespace=Cli_Prompt_Args() )
+    return parser.parse_args( namespace=CliPromptArgs() )
 
 
 def main():
@@ -134,7 +132,7 @@ def ask_ai(
 
     except APIStatusError as e:
         print(f"API Status Error {e.status_code}:", e.message)
-        sleep(SLEEP_DELAY) # delaying next AI API request...
+        exit(e.status_code)
 
 
 def get_message_and_usage_from_ai_response(
@@ -202,7 +200,7 @@ def append_new_call_params_to_assistant_role(
     call: FuncNamedArgs, assistant: ChatCompletionAssistantMessageParam
 ) -> ChatCompletionMessageFunctionToolCallParam:
     args = json.dumps(call.named_args)
-    func = Requested_Func_Args(name=call.func_name, arguments=args)
+    func = RequestedFuncArgs(name=call.func_name, arguments=args)
 
     tool_call_params = ChatCompletionMessageFunctionToolCallParam(
         id=call.call_id, type="function", function=func
