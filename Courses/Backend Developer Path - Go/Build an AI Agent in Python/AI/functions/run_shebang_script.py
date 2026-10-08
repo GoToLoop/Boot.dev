@@ -6,10 +6,11 @@ from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING: from openai.types.chat import ChatCompletionFunctionToolParam
 
-PYTHON = "python3" # executable
+from functions.get_file_content import read_file_content
+
 TIMEOUT = 30 # seconds
 
-def run_python_file(
+def run_shebang_script(
     work_dir: str, /, file_path: str, args: Optional[Sequence[str]] = None
 ) -> str:
     if not isdir(wd := abspath(work_dir)):
@@ -18,27 +19,30 @@ def run_python_file(
     if not isfile(target_file := normpath(join(wd, file_path))): return\
         'Error: "' + file_path + '" does not exist or is not a regular file'
 
-    if not target_file.endswith(".py"):
-        return 'Error: "' + file_path + '" is not a Python file'
-
     if not target_file.startswith(wd) or commonpath((wd, target_file)) != wd:
         return 'Error: Cannot execute "' + file_path\
             + '" as it is outside the permitted working directory'
 
+    try: shebang_mark = read_file_content(target_file, file_path, 2)
+    except OSError as e: return f'Error: Reading file "{file_path}"...\n{e}'
+
+    if not shebang_mark.startswith("#!"):
+        return 'Error: "' + file_path + '" is not a shebang script file'
+
     args = args or ()
-    command = PYTHON, target_file, *args
-    try: process = _call_python_script(command, wd)
+    command = target_file, *args
+    try: process = _call_shebang_script(command, wd)
 
     except TimeoutExpired:
-        return f"Error: Python script {file_path} timed out after {TIMEOUT}s"
+        return f"Error: shebang script {file_path} timed out after {TIMEOUT}s"
 
     except OSError as e:
-        return f"Error: Executing Python process w/ args {command}...\n{e}"
+        return f"Error: Executing shebang process w/ args {command}...\n{e}"
 
-    return _build_python_process_report(process)
+    return _build_shebang_process_report(process)
 
 
-def _call_python_script(
+def _call_shebang_script(
     py_args: Sequence[str], work_dir: str, timeout: float = TIMEOUT
 ) -> CompletedProcess[str]:
     return run(
@@ -50,7 +54,7 @@ def _call_python_script(
     )
 
 
-def _build_python_process_report(process: CompletedProcess[str]) -> str:
+def _build_shebang_process_report(process: CompletedProcess[str]) -> str:
     reports: list[str] = []
 
     if code := process.returncode:
@@ -67,12 +71,12 @@ def _build_python_process_report(process: CompletedProcess[str]) -> str:
     return '\n'.join(reports)
 
 
-schema_run_python_file: "ChatCompletionFunctionToolParam" = {
+schema_run_shebang_script: "ChatCompletionFunctionToolParam" = {
     "type": "function",
     "function": {
-        "name": "run_python_file",
+        "name": "run_shebang_script",
         "description": (
-            "Executes a specified Python (.py) file within the working "
+            "Executes a specified shebang script within the working "
             "directory with optional command-line arguments and returns its "
             "both outputs as 1 joined string. It also enforces a "
             f"{TIMEOUT}-second execution timeout."
@@ -84,8 +88,8 @@ schema_run_python_file: "ChatCompletionFunctionToolParam" = {
                 "file_path": {
                     "type": "string",
                     "description": (
-                        "The relative path to the Python file (.py) to execute,"
-                        " starting from the working directory."
+                        "The relative path to the shebang script to execute, "
+                        "starting from the working directory."
                     )
                 },
                 "args": {
@@ -95,7 +99,7 @@ schema_run_python_file: "ChatCompletionFunctionToolParam" = {
                     "description": (
                         "A sequence container representing any optional "
                         "command-line's variadic arguments to be passed to the "
-                        "Python script `file_path`."
+                        "shebang script `file_path`."
                     )
                 }
             }

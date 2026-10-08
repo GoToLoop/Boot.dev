@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING: from openai.types.chat import ChatCompletionFunctionToolParam
 
 MAX_CHARS = 10_000
-TRUNCATED = f'[...File "%s" truncated at {MAX_CHARS} characters]'
+TRUNCATED = '[...File "%s" truncated at %d characters]'
 
 def get_file_content(working_directory: str, /, rel_file_path: str) -> str:
     if not isdir(wd := abspath(working_directory)):
@@ -17,17 +17,19 @@ def get_file_content(working_directory: str, /, rel_file_path: str) -> str:
         return 'Error: Cannot read "' + rel_file_path\
             + '" as it is outside the permitted working directory'
 
-    try: return _read_file_content(target_file, rel_file_path)
+    try: return read_file_content(target_file, rel_file_path)
     except OSError as e: return f'Error: Reading file "{rel_file_path}"...\n{e}'
 
 
-def _read_file_content(
-    absolute_file_path: str, relative_file_path: str = ''
+def read_file_content(
+    absolute_file_path: str,
+    relative_file_path: str = '',
+    max_chars: int = MAX_CHARS
 ) -> str:
     with open(absolute_file_path) as f:
-        if len(content := f.read(MAX_CHARS + 1)) > MAX_CHARS: 
-            content = content[:MAX_CHARS] + TRUNCATED % (
-                relative_file_path or absolute_file_path
+        if len(content := f.read(max_chars + 1)) > max_chars: 
+            content = content[:max_chars] + TRUNCATED % (
+                relative_file_path or absolute_file_path, max_chars
             )
     return content
 
