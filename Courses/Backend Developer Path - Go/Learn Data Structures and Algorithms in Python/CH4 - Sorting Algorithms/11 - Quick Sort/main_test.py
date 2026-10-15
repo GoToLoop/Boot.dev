@@ -40,8 +40,7 @@ def test_quick_sort(
     print(f" * high: {input3}")
     print(f"Expected: {expected_output}")
     start = time.time()
-    result = input1.copy()
-    _ = quick_sort(result, input2, input3)
+    _ = quick_sort(result := input1.copy(), input2, input3)
     elapsed = time.time() - start
     timeout = 1.00
     if elapsed < timeout:

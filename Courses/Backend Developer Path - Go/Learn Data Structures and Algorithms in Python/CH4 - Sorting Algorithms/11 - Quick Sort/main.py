@@ -6,14 +6,14 @@ def quick_sort(nums: list[int], low: int, high: int) -> list[int]:
 
 def partition(nums: list[int], low: int, high: int) -> int:
     pivot = nums[high]
-    i = low - 1
+    i = low
 
     for j in range(low, high):
         if nums[j] < pivot:
-            i += 1
             nums[i], nums[j] = nums[j], nums[i]
+            i += 1
 
-    nums[high] = nums[i := i + 1]
+    nums[high] = nums[i]
     nums[i] = pivot
 
     return i
