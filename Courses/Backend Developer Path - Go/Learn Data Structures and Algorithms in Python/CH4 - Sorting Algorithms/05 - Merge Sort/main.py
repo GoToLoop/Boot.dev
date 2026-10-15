@@ -9,10 +9,8 @@ def merge_sort(nums: Sequence[int]) -> list[int]:
 def merge(a: Sequence[int], b: Sequence[int]) -> list[int]:
     merged: list[int] = []
     i = j = 0
-    len_a = len(a)
-    len_b = len(b)
 
-    while i < len_a and j < len_b:
+    while i < len(a) and j < len(b):
         if a[i] <= b[j]:
             merged.append(a[i])
             i += 1
