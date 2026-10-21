@@ -1,15 +1,15 @@
 def letter_combinations(digits: str) -> list[str]:
     if not digits: return []
 
-    result = [""]
+    combos = [""]
 
-    for d in digits:
-        if not ( letters := digit_to_letters.get(d) ):
-            raise ValueError("invalid digit: " + d)
+    for digit in digits:
+        if not ( letters := digit_to_letters.get(digit) ):
+            raise ValueError("invalid digit: " + digit)
 
-        result = [ combo + letter for combo in result for letter in letters ]
+        combos = [ combo + letter for combo in combos for letter in letters ]
 
-    return result
+    return combos
 
 
 # Don't touch below this line
