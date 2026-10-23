@@ -22,7 +22,7 @@ class LinkedList:
         current = self.head
 
         while current and hasattr(current, "val"):
-            vals.append(str(current.val))
+            vals.append( str(current.val) )
             current = current.next
 
         return " -> ".join(vals)
