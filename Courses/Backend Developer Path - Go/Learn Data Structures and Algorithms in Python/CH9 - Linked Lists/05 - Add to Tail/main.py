@@ -7,7 +7,7 @@ class LinkedList:
     def add_to_tail(self, node: Node):
         if not (current := self.head): self.head = node; return
         for current in self: pass
-        current.next = node
+        current.set_next(node)
 
 
     def __init__(self): self.head: Node | None = None
@@ -22,11 +22,4 @@ class LinkedList:
 
     @override
     def __repr__(self):
-        vals: list[str] = []
-        current = self.head
-
-        while current and hasattr(current, "val"):
-            vals.append( str(current.val) )
-            current = current.next
-
-        return " -> ".join(vals)
+          return " -> ".join( str(node.val) for node in self )
