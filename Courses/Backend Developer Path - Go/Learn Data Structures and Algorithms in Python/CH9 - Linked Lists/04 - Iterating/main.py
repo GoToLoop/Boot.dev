@@ -1,12 +1,10 @@
 # pyright: reportExplicitAny = hint
 
 from node import Node
-from typing import Any, override
+from typing import override
 
-class LinkedList:
-    head: "Node[Any] | None"
-
-    def __init__(self): self.head = None
+class LinkedList[T=str]:
+    def __init__(self): self.head: "Node[T] | None" = None
 
     def __iter__(self):
         node = self.head
@@ -17,5 +15,4 @@ class LinkedList:
 
 
     @override
-    def __repr__(self):
-        return " -> ".join( str(node.val) for node in self )
+    def __repr__(self): return " -> ".join( str(node.val) for node in self )

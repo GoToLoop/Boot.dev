@@ -5,7 +5,7 @@ class Node[T=Any]:
 
     def __init__(self, val: T): self.val = val; self.next = None
 
-    def set_next(self, node: "Node"): self.next = node
+    def set_next(self, node: "Node[T] | None"): self.next = node
 
     @override
     def __repr__(self): return str(self.val)

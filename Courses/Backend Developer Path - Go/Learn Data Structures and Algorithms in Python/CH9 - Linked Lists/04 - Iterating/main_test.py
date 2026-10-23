@@ -1,12 +1,10 @@
 #!/usr/bin/env -S python3 -m pytest
 
-# pyright: reportAny = hint
-
 import pytest
 from main import LinkedList
 from node import Node
 
-run_cases = [
+run_cases = (
     pytest.param("John Ruth", ["Major Marquis Warren", "John Ruth"]),
     pytest.param(
         "Daisy Domergue",
@@ -15,10 +13,10 @@ run_cases = [
     pytest.param(
         "Chris Mannix",
         ["Major Marquis Warren", "John Ruth", "Daisy Domergue", "Chris Mannix"]
-    ),
-]
+    )
+)
 
-submit_cases = [
+submit_cases = (
     pytest.param(
         "Bob",
         [
@@ -41,8 +39,8 @@ submit_cases = [
             "Oswaldo Mobray",
         ],
         marks=pytest.mark.submit,
-    ),
-]
+    )
+)
 
 @pytest.fixture(scope="module")
 def linked_list():

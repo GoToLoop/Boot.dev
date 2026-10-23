@@ -1,17 +1,15 @@
 #!/usr/bin/env -S python3 -m pytest
 
-# pyright: reportAny = hint
-
 import pytest
 from main import LinkedList
 from node import Node
 
-run_cases = [
+run_cases = (
     pytest.param(["Major Marquis Warren", "John Ruth"]),
-    pytest.param(["Major Marquis Warren", "John Ruth", "Daisy Domergue"]),
-]
+    pytest.param(["Major Marquis Warren", "John Ruth", "Daisy Domergue"])
+)
 
-submit_cases = [
+submit_cases = (
     pytest.param(
         ["Major Marquis Warren", "John Ruth", "Daisy Domergue", "Chris Mannix"],
         marks=pytest.mark.submit,
@@ -36,9 +34,8 @@ submit_cases = [
             "Oswaldo Mobray",
         ],
         marks=pytest.mark.submit,
-    ),
-]
-
+    )
+)
 
 @pytest.mark.parametrize("inputs", run_cases + submit_cases)
 def test_add_to_tail(inputs: list[str]):
@@ -54,4 +51,4 @@ def test_add_to_tail(inputs: list[str]):
 
 
 def linked_list_to_list(linked_list: LinkedList):
-    return [node.val for node in linked_list]
+    return [ node.val for node in linked_list ]
