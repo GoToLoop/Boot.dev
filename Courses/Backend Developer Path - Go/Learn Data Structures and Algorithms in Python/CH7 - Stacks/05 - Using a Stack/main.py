@@ -8,6 +8,6 @@ def is_balanced(parentheses: str) -> bool:
 
         elif parenthesis == ')':
             if open_parentheses.size() == 0: return False
-            open_parentheses.pop()
+            _ = open_parentheses.pop()
 
     return open_parentheses.size() == 0
