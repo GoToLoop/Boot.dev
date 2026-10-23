@@ -1,13 +1,11 @@
-# pyright: reportDeprecated = hint
-
-from typing import override, Optional
+from typing import override
 
 class Node[T=str]:
-    val: T; next: Optional["Node"]
+    val: T; next: "Node | None"
 
-    def __init__(self, val: T) -> None: self.val = val; self.next = None
+    def __init__(self, val: T): self.val = val; self.next = None
 
-    def set_next(self, node: "Node") -> None: self.next = node
+    def set_next(self, node: "Node"): self.next = node
 
     @override
-    def __repr__(self) -> str: return str(self.val)
+    def __repr__(self): return str(self.val)
