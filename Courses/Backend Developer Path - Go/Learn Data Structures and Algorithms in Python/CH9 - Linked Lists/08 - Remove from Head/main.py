@@ -12,7 +12,7 @@ class LLQueue[T=str]:
         return killed_head
 
 
-    def add_to_head(self, node: "Node[T]"):
+    def _add_to_head(self, node: "Node[T]"):
         node.set_next(self.head)
         if not self.head: self.tail = node
         self.head = node
@@ -21,6 +21,19 @@ class LLQueue[T=str]:
     def add_to_tail(self, node: "Node[T]"):
         if not (self.head and self.tail): self.head = self.tail = node
         else: self.tail.set_next(node); self.tail = node
+
+
+    def _remove_from_tail(self):
+        if not ((current := self.head) and self.tail): return None
+        if current is (killed_tail := self.tail): return self.remove_from_head()
+
+        while current.next and current.next is not self.tail:
+            current = current.next
+        
+        self.tail = current
+        current.set_next(None)
+
+        return killed_tail
 
 
     def clear(self):
