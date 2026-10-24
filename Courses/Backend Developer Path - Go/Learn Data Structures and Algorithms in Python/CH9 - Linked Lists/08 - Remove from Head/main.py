@@ -29,7 +29,7 @@ class LLQueue[T=str]:
 
         while current.next and current.next is not self.tail:
             current = current.next
-        
+
         self.tail = current
         current.set_next(None)
 
