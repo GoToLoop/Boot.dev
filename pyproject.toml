@@ -1,3 +1,63 @@
 [tool.pyright]
+# ["off", "basic", "standard", "strict", "recommended", "all"]
 typeCheckingMode = "standard"
 reportSelfClsParameterName = "hint"
+# reportExplicitAny = "hint"
+# reportAny = "hint"
+
+[tool.ruff]
+target-version = "py313"
+line-length = 80
+
+[tool.ruff.lint]
+select = [
+    "E",   # Pycodestyle errors
+    "F",   # Pyflakes structural or logical mistakes
+    # "I",   # auto sorts imports
+    # "UP",  # updates old type styles
+    # "TCH", # forces type imports to `if TYPE_CHECKING:` blocks
+]
+
+ignore = [
+    "E701", # Multiple statements on one line (colon)
+    "E702", # Multiple statements on one line (semicolon)
+]
+
+[tool.pylint.main]
+errors-only = true
+py-version = "3.13"
+
+[tool.pylint.format]
+max-line-length = 80
+
+[tool.pylint.messages-control]
+disable = [
+    "C",     # Disables all convention-related checks
+    "R",     # Disables all refactor-related checks
+    "E0401", # (import-error)
+]
+
+[tool.mypy]
+# Set the Python version
+python_version = "3.13"
+
+allow_untyped_defs = false # Allows functions without type hints
+allow_incomplete_defs = true # Allows functions with missing return or arg types
+
+# Disallow dynamic typing controls
+disallow_any_generics = false
+disallow_subclassing_any = false
+disallow_untyped_calls = false
+disallow_untyped_decorators = false
+
+# Ignore missing imports for third-party libraries that lack type stubs
+ignore_missing_imports = true
+
+# Warn settings (turn off annoying warnings)
+warn_return_any = false
+warn_unused_ignores = false
+warn_redundant_casts = false
+
+# Optional settings relaxation
+no_implicit_optional = false  # Allows omitting Optional[] when default is None
+check_untyped_defs = false    # Don't check body of untyped functions
