@@ -1,6 +1,8 @@
 [tool.pyright]
 # ["off", "basic", "standard", "strict", "recommended", "all"]
 typeCheckingMode = "standard"
+
+# [true, false, "none", "hint", "information", "warning", or "error"]
 reportSelfClsParameterName = "hint"
 # reportExplicitAny = "hint"
 # reportAny = "hint"
@@ -41,23 +43,24 @@ disable = [
 # Set the Python version
 python_version = "3.13"
 
-allow_untyped_defs = false # Allows functions without type hints
-allow_incomplete_defs = true # Allows functions with missing return or arg types
-
-# Disallow dynamic typing controls
-disallow_any_generics = false
-disallow_subclassing_any = false
-disallow_untyped_calls = false
-disallow_untyped_decorators = false
+# Allow functions with missing return or arg types but not fully untyped
+disallow_untyped_defs = false # Completely untyped functions are allowed if true
+disallow_incomplete_defs = false # Functions with incomplete types not allowed
 
 # Ignore missing imports for third-party libraries that lack type stubs
 ignore_missing_imports = true
 
-# Warn settings (turn off annoying warnings)
-warn_return_any = false
-warn_unused_ignores = false
-warn_redundant_casts = false
-
 # Optional settings relaxation
 no_implicit_optional = false  # Allows omitting Optional[] when default is None
 check_untyped_defs = false    # Don't check body of untyped functions
+
+# Disallow dynamic typing controls
+# disallow_any_generics = false
+# disallow_subclassing_any = false
+# disallow_untyped_calls = false
+# disallow_untyped_decorators = false
+
+# Warn settings (turn off annoying warnings)
+# warn_return_any = false
+# warn_unused_ignores = false
+# warn_redundant_casts = false
