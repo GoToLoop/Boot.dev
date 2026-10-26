@@ -18,10 +18,10 @@ submit_cases = (
 
 @pytest.mark.parametrize("num_users", run_cases + submit_cases)
 def test_insert_nodes(num_users: int):
-    users = get_users(num_users)
-
     expected_bst = BSTNode()
-    for user in users: ref_implementation(expected_bst, user)
+
+    for user in ( users := get_users(num_users) ):
+        ref_implementation(expected_bst, user)
 
     print("\n=====================================")
     print("Expecting Tree:")
@@ -30,6 +30,7 @@ def test_insert_nodes(num_users: int):
     print("-------------------------------------\n")
 
     actual_bst = BSTNode()
+
     for user in users:
         print("Inserting", user, "into tree...")
         actual_bst.insert(user)
