@@ -20,7 +20,7 @@ def ref_implementation(node: BSTNode[C], val: C):
 
 
 def ref_inorder(node: BSTNode[C], acc: MutableSequence[C]):
-    """Mock implementation for an "inorder" traversal, populating the
+    """Mock implementation for an "in-order" traversal, populating the
     accumulator list with the binary-sorted user values.
 
     Args:

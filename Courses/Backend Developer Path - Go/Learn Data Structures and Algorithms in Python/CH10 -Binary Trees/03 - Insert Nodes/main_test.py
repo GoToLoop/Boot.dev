@@ -44,7 +44,7 @@ def test_insert_nodes(num_users: int):
     assert ref_inorder(actual_bst, []) == ref_inorder(expected_bst, [])
 
 
-def print_tree(bst_node: BSTNode):
+def print_tree(bst_node: BSTNode | None):
     print('\n'.join( format_tree_string(bst_node, []) ))
 
 

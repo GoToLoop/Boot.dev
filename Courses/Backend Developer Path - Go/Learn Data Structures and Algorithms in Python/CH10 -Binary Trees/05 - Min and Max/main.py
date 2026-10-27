@@ -18,18 +18,26 @@ class BSTNode(Generic[C]):
         self.val: C | None = val
 
 
-    def get_min(self):
+    def get_min_node(self):
         node = self
         while node.left: node = node.left
-        assert node.val, "Tree is empty"
-        return node.val
+        return node
+
+
+    def get_min(self):
+        assert ( val := self.get_min_node().val ), "Tree is empty"
+        return val
+
+
+    def get_max_node(self):
+        node = self
+        while node.right: node = node.right
+        return node
 
 
     def get_max(self):
-        node = self
-        while node.right: node = node.right
-        assert node.val, "Tree is empty"
-        return node.val
+        assert ( val := self.get_max_node().val ), "Tree is empty"
+        return val
 
 
     def insert(self, val: C):

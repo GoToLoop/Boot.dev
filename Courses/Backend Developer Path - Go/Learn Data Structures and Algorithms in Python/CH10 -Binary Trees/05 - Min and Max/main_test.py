@@ -34,7 +34,7 @@ def test_insert_nodes(num_users: int, min_user: str, max_user: str):
     assert actual_min.user_name == min_user
 
 
-def print_tree(bst_node: BSTNode):
+def print_tree(bst_node: BSTNode | None):
     print('\n'.join( format_tree_string(bst_node, []) ))
 
 
