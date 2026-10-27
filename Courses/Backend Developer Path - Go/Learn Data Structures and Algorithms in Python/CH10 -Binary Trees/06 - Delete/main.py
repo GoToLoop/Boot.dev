@@ -14,6 +14,7 @@ class BSTNode(Generic[C]):
         self.right: BSTNode[C] | None = None
         self.val: C | None = val
 
+
     def get_min_node(self) -> "BSTNode[C]":
         node = self
         while node.left: node = node.left

@@ -29,7 +29,7 @@ submit_cases = (
 @pytest.mark.parametrize(
     ("num_users", "num_to_delete", "expected"), run_cases + submit_cases
 )
-def test_insert_nodes(num_users: int, num_to_delete: int, expected: list[User]):
+def test_node_delete(num_users: int, num_to_delete: int, expected: list[User]):
     users_copy = list(users := get_users(num_users))
     shuffle(users_copy)
     users_to_delete = users_copy[:num_to_delete]

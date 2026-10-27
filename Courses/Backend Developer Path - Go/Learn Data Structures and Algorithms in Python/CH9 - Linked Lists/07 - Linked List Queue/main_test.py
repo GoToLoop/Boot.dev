@@ -24,7 +24,7 @@ TIMEOUT = MILLIS / 1000
 @pytest.mark.parametrize(
     ("num_items", "first_item", "last_item"), run_cases + submit_cases
 )
-def test_add_to_tail(num_items: int, first_item: str, last_item: str):
+def test_linked_list_queue(num_items: int, first_item: str, last_item: str):
     print("\n---------------------------------")
     print(f"Adding {num_items} job candidates to a linked list's head")
 

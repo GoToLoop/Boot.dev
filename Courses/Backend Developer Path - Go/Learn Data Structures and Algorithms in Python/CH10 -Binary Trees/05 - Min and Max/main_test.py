@@ -16,7 +16,7 @@ submit_cases = (
 @pytest.mark.parametrize(
     ("num_users", "min_user", "max_user"), run_cases + submit_cases
 )
-def test_insert_nodes(num_users: int, min_user: str, max_user: str):
+def test_min_max(num_users: int, min_user: str, max_user: str):
     bst = BSTNode()
     for user in get_users(num_users): bst.insert(user)
 

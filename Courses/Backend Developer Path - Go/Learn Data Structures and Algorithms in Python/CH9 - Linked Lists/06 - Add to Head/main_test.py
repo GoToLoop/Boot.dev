@@ -60,7 +60,7 @@ submit_cases = (
 )
 
 @pytest.mark.parametrize(("inputs", "expected_state"), run_cases + submit_cases)
-def test_add_to_tail(inputs: list[str], expected_state: list[str]):
+def test_add_to_head(inputs: list[str], expected_state: list[str]):
     print("\n---------------------------------")
 
     linked_list = LinkedList()

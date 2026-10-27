@@ -34,7 +34,7 @@ submit_cases = (
     ("items", "expected_state", "expected_head", "expected_tail"),
     run_cases + submit_cases
 )
-def test_add_to_tail(
+def test_remove_from_head(
     items: list[str], expected_state: list[str],
     expected_head: str | None, expected_tail: str | None
 ):
