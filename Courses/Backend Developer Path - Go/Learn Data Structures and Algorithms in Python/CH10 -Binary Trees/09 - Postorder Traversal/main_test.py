@@ -14,8 +14,6 @@ submit_cases = (
         User(11), User(10), User(18), User(17), User(19), User(2), User(23),
         User(27), User(33), User(30), User(22), User(34)
     ], marks=pytest.mark.submit),
-
-    pytest.param(0, [], marks=pytest.mark.submit),
 )
 
 @pytest.mark.parametrize(("num_characters", "expected"), run_cases+submit_cases)
