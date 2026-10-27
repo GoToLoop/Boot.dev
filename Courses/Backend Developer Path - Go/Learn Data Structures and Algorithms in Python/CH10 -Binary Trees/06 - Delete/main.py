@@ -1,12 +1,9 @@
-# pyright: reportExplicitAny = hint
-# pyright: reportAny = hint
-
 from user import User
-from typing import Protocol, Any, TypeVar, Generic
+from typing import Protocol, Self, TypeVar, Generic
 
 class SupportsComparison(Protocol):
-    def __lt__(self, other: Any) -> bool: ...
-    def __gt__(self, other: Any) -> bool: ...
+    def __lt__(self, other: Self, /) -> bool: ...
+    def __gt__(self, other: Self, /) -> bool: ...
 
 
 C = TypeVar("C", bound=SupportsComparison, default=User)
