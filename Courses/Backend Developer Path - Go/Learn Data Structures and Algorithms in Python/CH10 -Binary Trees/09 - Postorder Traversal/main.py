@@ -58,7 +58,7 @@ class BSTNode(Generic[C]):
         elif val > self.val:
             if self.right: self.right = self.right.delete(val)
 
-        else:
+        else: # found val in current self node
             if self.right is None: return self.left
             if self.left is None: return self.right
 
