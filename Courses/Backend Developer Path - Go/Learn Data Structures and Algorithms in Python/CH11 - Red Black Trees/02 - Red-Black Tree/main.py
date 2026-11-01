@@ -9,13 +9,11 @@ class SupportsComparison(Protocol):
 C = TypeVar("C", bound=SupportsComparison, default=User)
 
 class RBNode(Generic[C]):
-    def __init__(
-        self, val: C, red: bool = False, parent: Self | None = None
-    ) -> None:
+    def __init__(self, val: C, red: bool = False) -> None:
         self.val: C = val
         self.red: bool = red
 
-        self.parent: RBNode[C] | None = parent
+        self.parent: RBNode[C] | None = None
 
         self.left: RBNode[C] | Nil = self
         self.right: RBNode[C] | Nil = self
@@ -38,7 +36,7 @@ class RBTree(Generic[C]):
         new_node.left = new_node.right = NIL
 
         current = self.root
-        parent = new_node.parent
+        parent = None
 
         while not is_nil(current):
             if val == current.val: return False
