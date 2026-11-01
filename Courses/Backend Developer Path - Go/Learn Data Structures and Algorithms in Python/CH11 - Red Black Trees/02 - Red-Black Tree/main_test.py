@@ -42,8 +42,8 @@ def test_inorder(num_users: int):
     assert ref_inorder(actual_tree.root, []) == ref_inorder(ref_tree.root, [])
 
 
-def print_tree(node: RBTree | None):
-    print('\n'.join( format_tree_string(node and node.root, []) ))
+def print_tree(node: RBTree):
+    print('\n'.join( format_tree_string(node.root, []) ))
 
 
 def format_tree_string(
