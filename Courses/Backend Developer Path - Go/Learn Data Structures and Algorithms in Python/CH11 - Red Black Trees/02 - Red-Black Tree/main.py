@@ -1,0 +1,49 @@
+from user import User
+from typing import Final, Generic, Literal, Protocol, Self, TypeIs, TypeVar
+
+class SupportsComparison(Protocol):
+    def __lt__(self, other: Self, /) -> bool: ...
+    def __gt__(self, other: Self, /) -> bool: ...
+
+
+C = TypeVar("C", bound=SupportsComparison, default=User)
+
+class RBNode(Generic[C]):
+    def __init__(
+        self, val: C, red: bool = False, parent: Self | None = None
+    ) -> None:
+        self.val: C = val
+        self.red: bool = red
+
+        self.parent: Self | None = parent
+
+        self.left: Self | Nil = self
+        self.right: Self | Nil = self
+
+
+Nil = RBNode[Literal[False]]
+NIL: Nil = RBNode(False)
+
+def is_nil(node: RBNode[C] | Nil) -> TypeIs[Nil]: return node is NIL
+
+class RBTree(Generic[C]):
+    nil: Final = NIL
+
+    def __init__(self, root: RBNode[C] | Nil = NIL) -> None:
+        self.root: RBNode[C] | Nil = root
+
+    def insert(self, val: C) -> bool:
+        new_node = RBNode(val, True)
+        new_node.left = new_node.right = NIL
+        current = self.root
+
+        while not is_nil(current):
+            if val == current.val: return False
+            new_node.parent = current
+            current = val < current.val and current.left or current.right
+
+        if ( parent := new_node.parent ) is None: self.root = new_node
+        elif val < parent.val: parent.left = new_node
+        else: parent.right = new_node
+
+        return True
