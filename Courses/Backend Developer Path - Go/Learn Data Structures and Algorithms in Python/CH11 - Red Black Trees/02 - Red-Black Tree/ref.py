@@ -2,7 +2,10 @@ from main import RBTree, RBNode, C, Nil, NIL, is_nil
 from collections.abc import MutableSequence
 
 def ref_implementation(tree: RBTree[C], val: C):
-    """Inserts a new comparable user value into the Red-Black Tree (BST).
+    """Inserts a new comparable user value into the Red-Black Tree (RBT).
+
+    The value is placed as a new leaf node at the correct position found 
+    via standard BST traversal, extending the tree by one edge.
 
     Args:
         tree: The Red-Black Tree instance into which the value will be inserted.
