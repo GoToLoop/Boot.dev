@@ -32,18 +32,22 @@ class RBTree(Generic[C]):
     def __init__(self, root: RBNode[C] | Nil = NIL) -> None:
         self.root: RBNode[C] | Nil = root
 
+
     def insert(self, val: C) -> bool:
         new_node = RBNode(val, True)
         new_node.left = new_node.right = NIL
+
         current = self.root
+        parent = new_node.parent
 
         while not is_nil(current):
             if val == current.val: return False
-            new_node.parent = current
+            parent = current
             current = val < current.val and current.left or current.right
 
-        if ( parent := new_node.parent ) is None: self.root = new_node
+        if parent is None: self.root = new_node
         elif val < parent.val: parent.left = new_node
         else: parent.right = new_node
 
+        new_node.parent = parent
         return True
