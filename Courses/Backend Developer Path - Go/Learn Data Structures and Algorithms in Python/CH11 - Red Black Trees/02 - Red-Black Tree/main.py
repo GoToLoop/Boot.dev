@@ -15,10 +15,10 @@ class RBNode(Generic[C]):
         self.val: C = val
         self.red: bool = red
 
-        self.parent: Self | None = parent
+        self.parent: RBNode[C] | None = parent
 
-        self.left: Self | Nil = self
-        self.right: Self | Nil = self
+        self.left: RBNode[C] | Nil = self
+        self.right: RBNode[C] | Nil = self
 
 
 Nil = RBNode[Literal[False]]
